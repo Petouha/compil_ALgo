@@ -36,13 +36,13 @@ S : parameters code;
 parameters : OPEN_ACCO list_parameters_start CLOSE_ACCO;
 
 list_parameters_start:
-    | IDF list_parameters ;
+    | IDF list_parameters {ajouter(strdup(yylval.idf),yylval.entier,liste);};
 
 list_parameters: 
     | VIRGULE IDF list_parameters ;
 
 code: //rien 
-    | SET OPEN_ACCO IDF CLOSE_ACCO IDF {printf("")}
+    | SET OPEN_ACCO IDF CLOSE_ACCO IDF;
 
 %%
 
@@ -56,5 +56,6 @@ int main(void){
     //     printf("%s\n", vars[j]);
     //     free(vars[j]);  // Free the allocated memory for each variable
     // }
+    print_sym_tab(liste);
     return 0;
 }

@@ -95,12 +95,33 @@ void affectation(int i, int j){
 }
 
 void ajouter(int val, char* nom, sym_tab** head){
+    sym_tab *cel = nouvelle_cellule();
+    if(cel == NULL)
+        exit(EXIT_FAILURE);
+    strcpy(cel->nom_idf,nom);
+    cel->valeur = val;
+    
+    cel->ptr = *head;
+    *head = cel;
 
 }
-sym_tab *nouvelle_cellule(){
-    sym_tab *cellule = malloc(sizeof(sym_tab));
-    if(cellule == NULL){
-        perror("malloc");
-        return EXIT_FAILURE;
+sym_tab* nouvelle_cellule() {
+    sym_tab* cel = (sym_tab*)malloc(sizeof(sym_tab));
+    if (cel != NULL) {
+        cel->valeur = 0;
+        cel->nom_idf[0] = '\0';  // Initialize the string
+        cel->ptr = NULL;
     }
+    return cel;
+}
+
+void print_sym_table(sym_tab *head){
+    printf("------------------------\n");
+    printf("--idf---------val-------\n");
+    while(head != NULL)
+    {
+        printf("  %s          %d",head->nom_idf,head->valeur);
+        head=head->ptr;
+    }
+    
 }
