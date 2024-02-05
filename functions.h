@@ -3,11 +3,11 @@
 #include <unistd.h>
 #include <string.h>
 
-typedef struct
+typedef struct sym
 {
     char nom_idf[64];
     int valeur;
-    sym_tab* ptr;
+    struct sym *ptr;
 }sym_tab;
 
 sym_tab *nouvelle_cellule();

@@ -95,6 +95,7 @@ void affectation(int i, int j){
 }
 
 void ajouter(int val, char* nom, sym_tab** head){
+    
     sym_tab *cel = nouvelle_cellule();
     if(cel == NULL)
         exit(EXIT_FAILURE);
@@ -110,12 +111,11 @@ sym_tab* nouvelle_cellule() {
     if (cel != NULL) {
         cel->valeur = 0;
         cel->nom_idf[0] = '\0';  // Initialize the string
-        cel->ptr = NULL;
     }
     return cel;
 }
 
-void print_sym_table(sym_tab *head){
+void print_sym_tab(sym_tab *head){
     printf("------------------------\n");
     printf("--idf---------val-------\n");
     while(head != NULL)

@@ -4,7 +4,8 @@
 #include <string.h>
 #include "functions.h"
 
-sym_tab* liste;
+sym_tab *liste;
+char* idf_temp;
 
 int yylex();  
 void yyerror(const char* s){
@@ -36,26 +37,23 @@ S : parameters code;
 parameters : OPEN_ACCO list_parameters_start CLOSE_ACCO;
 
 list_parameters_start:
-    | IDF list_parameters {ajouter(strdup(yylval.idf),yylval.entier,liste);};
+    | IDF list_parameters {printf("fff\n");printf("oui %s\n",idf_temp);};
 
 list_parameters: 
     | VIRGULE IDF list_parameters ;
 
 code: //rien 
-    | SET OPEN_ACCO IDF CLOSE_ACCO IDF;
+    | SET OPEN_ACCO IDF CLOSE_ACCO IDF {};
 
 %%
 
 
 int main(void){
     
-
+    printf("debut\n");
+    liste=NULL;
 
     yyparse();
-    // for (int j = 0; j < 10 && vars[j] != NULL; j++) {
-    //     printf("%s\n", vars[j]);
-    //     free(vars[j]);  // Free the allocated memory for each variable
-    // }
     print_sym_tab(liste);
     return 0;
 }
