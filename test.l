@@ -9,6 +9,10 @@
 
 %%
 "\\begin{algo}" {return BEG;}
+"\\end{algo}"   {return END;}
+"\\SET"         {return SET;}
+"\\INCR"        {return INCR;}
+
 [0-9]+ {yylval.entier=atoi(yytext);return NUM;}
 
 [a-zA-Z]+ {yylval.idf=strdup(yytext);return IDF;}
