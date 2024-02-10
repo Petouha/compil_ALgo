@@ -5,7 +5,7 @@
 #include "functions.h"
 
 sym_tab *liste;
-char* idf_temp;
+int param_number,local_number;
 
 int yylex();  
 void yyerror(const char* s){
@@ -24,7 +24,7 @@ void yyerror(const char* s){
 %token<entier> NUM
 %token<idf> IDF
 
-%token BEG OPEN_ACCO CLOSE_ACCO VIRGULE SET;
+%token BEG END OPEN_ACCO CLOSE_ACCO VIRGULE SET INCR;
 
 %start S
 
@@ -37,10 +37,10 @@ S : parameters code;
 parameters : OPEN_ACCO list_parameters_start CLOSE_ACCO;
 
 list_parameters_start:
-    | IDF list_parameters {printf("fff\n");printf("oui %s\n",idf_temp);};
+    | IDF list_parameters {ajouter(PARAM_VAR,$1,&liste);};
 
 list_parameters: 
-    | VIRGULE IDF list_parameters ;
+    | VIRGULE IDF list_parameters{ajouter(PARAM_VAR,$2,&liste);};
 
 code: //rien 
     | SET OPEN_ACCO IDF CLOSE_ACCO IDF {};
