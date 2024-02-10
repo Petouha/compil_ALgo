@@ -3,10 +3,13 @@
 #include <unistd.h>
 #include <string.h>
 
+
+typedef enum {LOCAL_VAR,PARAM_VAR} TYPE_VAR;
 typedef struct sym
 {
     char nom_idf[64];
-    int valeur;
+    TYPE_VAR type;
+    int num_var;
     struct sym *ptr;
 }sym_tab;
 
