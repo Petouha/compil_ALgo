@@ -9,7 +9,7 @@ LDFLAGS=
 # --nounput: ne g�n�re pas la fonction yyunput() inutile
 # --DYY_NO_INPUT: ne prend pas en compte la fonction input() inutile
 # -D_POSIX_SOURCE: d�clare la fonction fileno()
-LEXOPTS=-D_POSIX_SOURCE -DYY_NO_INPUT --nounput
+LEXOPTS= -D_POSIX_C_SOURCE=200809L -DYY_NO_INPUT --nounput
 YACCOPTS=
 
 # REMPLACER ICI "fichier" PAR LE NOM DE VOS FICHIERS
