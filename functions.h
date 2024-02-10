@@ -5,6 +5,8 @@
 
 
 typedef enum {LOCAL_VAR,PARAM_VAR} TYPE_VAR;
+
+extern int param_number,local_number;
 typedef struct sym
 {
     char nom_idf[64];
