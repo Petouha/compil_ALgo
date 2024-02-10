@@ -120,3 +120,13 @@ void print_sym_tab(sym_tab *head){
     }
     
 }
+
+sym_tab* recherche(char* nom, sym_tab* head){
+    while (head != NULL){
+        if (!strcmp(head->nom_idf,nom)){
+            break;
+        }
+        head=head->ptr;
+    }
+    return head;
+}
