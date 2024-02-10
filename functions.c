@@ -101,9 +101,10 @@ void ajouter(int val, char* nom, sym_tab** head){
         exit(EXIT_FAILURE);
     strcpy(cel->nom_idf,nom);
     cel->type = val;
+    cel->num_var=param_number;
     cel->ptr = *head;
     *head = cel;
-
+    param_number++;
 }
 sym_tab* nouvelle_cellule() {
     sym_tab* cel = (sym_tab*)malloc(sizeof(sym_tab));
@@ -112,10 +113,10 @@ sym_tab* nouvelle_cellule() {
 
 void print_sym_tab(sym_tab *head){
     printf("------------------------\n");
-    printf("--idf---------type-------\n");
+    //printf("--idf---------type-------\n");
     while(head != NULL)
     {
-        printf("  %s          %d\n",head->nom_idf,head->type);
+        printf("name %s--type %d--num_val %d\n",head->nom_idf,head->type,head->num_var);
         head=head->ptr;
     }
     
