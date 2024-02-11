@@ -131,3 +131,26 @@ sym_tab* recherche(char* nom, sym_tab* head){
     }
     return head;
 }
+/*
+    récupère depuis la pile un des paramètres (si il y en a) de l'algo.
+    à partir de la base de la pile (qui contient le dernier paramètre), on ajoute
+    le nombre de mot machines nécessaire pour atteindre l'adresse mémoire du paramètre.
+*/
+void get_param_from_stack(char *nom,sym_tab* head){
+    printf("\tpop ax\n");
+    printf("\tcp bx,ax\n");
+    printf("\tpush ax\n");
+    printf("\tconst ax,%d\n",get_param_location("a",head));
+    printf("\tadd bx,ax\n");
+    printf("\tloadw ax,bx\n");
+    printf("\tpush ax\n");
+}
+
+int get_param_location(char *nom,sym_tab* head){
+    sym_tab *node = recherche(nom,head);
+    if(node == NULL){
+        perror("recherche");
+        exit(EXIT_FAILURE);
+    }
+    return node->num_var*2;
+}
