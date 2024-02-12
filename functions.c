@@ -104,7 +104,6 @@ void ajouter(int val, char* nom, sym_tab** head){
     cel->num_var=param_number;
     cel->ptr = *head;
     *head = cel;
-    param_number++;
 }
 sym_tab* nouvelle_cellule() {
     sym_tab* cel = (sym_tab*)malloc(sizeof(sym_tab));
@@ -140,7 +139,7 @@ void get_param_from_stack(char *nom,sym_tab* head){
     printf("\tpop ax\n");
     printf("\tcp bx,ax\n");
     printf("\tpush ax\n");
-    printf("\tconst ax,%d\n",get_param_location("a",head));
+    printf("\tconst ax,%d\n",get_param_location("d",head));
     printf("\tadd bx,ax\n");
     printf("\tloadw ax,bx\n");
     printf("\tpush ax\n");
