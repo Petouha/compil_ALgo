@@ -34,18 +34,19 @@ S : parameters code;
 
 // starting_point : BEG OPEN_ACCO IDF CLOSE_ACCO ;
 
-parameters : OPEN_ACCO list_parameters_start CLOSE_ACCO {printf("\tpush bp\n");};
+parameters : OPEN_ACCO list_parameters CLOSE_ACCO {printf("\tpush bp\n");};
 
-list_parameters_start:
-    | IDF list_parameters {ajouter(PARAM_VAR,$1,&liste);num(tmp);tmp++;printf(";%s\n",$1);};
+list_parameters:
+    | IDF list_parameters {ajouter(PARAM_VAR,$1,&liste);num(param_number); param_number++;printf(";%s\n",$1);};
+    | VIRGULE list_parameters 
 
-list_parameters: 
-    | VIRGULE IDF list_parameters{ajouter(PARAM_VAR,$2,&liste);num(tmp);tmp++;printf(";%s\n",$2);};
+/* list_parameters: 
+    | VIRGULE IDF list_parameters{ajouter(PARAM_VAR,$2,&liste);num(param_number);param_number++;printf(";%s\n",$2);}; */
 
 code: //rien 
       {get_param_from_stack("a",liste);}
     | SET OPEN_ACCO IDF CLOSE_ACCO OPEN_ACCO IDF CLOSE_ACCO {
-
+        
     };
 
 %%
