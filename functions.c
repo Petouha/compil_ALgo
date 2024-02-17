@@ -87,11 +87,13 @@ void num(int number){
     printf("\tpush ax\n");
 }
 
-void affectation(int i, int j){
-    printf("\tconst ax,%d\n",i);
-    printf("\tpush ax\n");
-    printf("\tconst ax,%d\n",j);
-    printf("\tpush ax\n");
+void affectation(char* var1, char* var2,sym_tab* head){
+    printf(";affectation de %s = %s\n",var1,var2);
+    get_param_from_stack(var2,head);
+    printf("\tloadw ax,sp\n");
+    printf("\tconst bx,%d\n",get_param_location(var1,head));
+    printf("\tadd ax,bx\n");
+    printf("\tstorew dx,ax\n");
 }
 
 void ajouter(int val, char* nom, sym_tab** head){
@@ -111,11 +113,11 @@ sym_tab* nouvelle_cellule() {
 }
 
 void print_sym_tab(sym_tab *head){
-    printf("------------------------\n");
+    printf(";------------------------\n");
     //printf("--idf---------type-------\n");
     while(head != NULL)
     {
-        printf("name %s--type %d--num_val %d\n",head->nom_idf,head->type,head->num_var);
+        printf(";name %s--type %d--num_val %d\n",head->nom_idf,head->type,head->num_var);
         head=head->ptr;
     }
     
@@ -134,15 +136,21 @@ sym_tab* recherche(char* nom, sym_tab* head){
     récupère depuis la pile un des paramètres (si il y en a) de l'algo.
     à partir de la base de la pile (qui contient le dernier paramètre), on ajoute
     le nombre de mot machines nécessaire pour atteindre l'adresse mémoire du paramètre.
+    RESULTAT : DANS dx
 */
 void get_param_from_stack(char *nom,sym_tab* head){
-    printf("\tpop ax\n");
-    printf("\tcp bx,ax\n");
-    printf("\tpush ax\n");
-    printf("\tconst ax,%d\n",get_param_location("d",head));
+    printf(";get_param_from_stack:%s\n",nom);
+    printf("\tloadw bx,sp\n");
+    printf("\tconst ax,%d\n",get_param_location(nom,head));
     printf("\tadd bx,ax\n");
-    printf("\tloadw ax,bx\n");
-    printf("\tpush ax\n");
+    printf("\tloadw dx,bx\n");
+}
+
+void set_param_from_stack(char *nom, sym_tab* head){
+    printf("\tloadw bx,sp\n");
+    printf("\tconst ax,%d\n",get_param_location(nom,head));
+
+
 }
 
 int get_param_location(char *nom,sym_tab* head){
