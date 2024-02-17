@@ -161,3 +161,11 @@ int get_param_location(char *nom,sym_tab* head){
     }
     return node->num_var*2;
 }
+void print_param(char* nom,sym_tab* head){
+    printf(";start print_param\n");
+    get_param_from_stack(nom,head);
+    printf("\tcallprintfd bx\n");
+    printf("\tconst cx,nl\n");
+    printf("\tcallprintfs cx\n");
+    printf(";end print_param\n");
+}
