@@ -12,6 +12,7 @@
 "\\end{algo}"   {return END;}
 "\\SET"         {return SET;}
 "\\INCR"        {return INCR;}
+"\\DECR"        {return DECR;}
 
 [0-9]+ {yylval.entier=atoi(yytext);return NUM;}
 

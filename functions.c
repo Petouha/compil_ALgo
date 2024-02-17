@@ -109,6 +109,17 @@ void increment(char* nom,sym_tab* head){
     printf(";end increment\n");
 }
 
+void decrement(char* nom,sym_tab* head){
+    printf(";decrement : %s\n",nom);
+    get_param_from_stack(nom,head);
+    print_reg("bx",head);
+    printf("\tconst ax,1\n");
+    printf("\tsub dx,ax\n");
+    printf("\tstorew dx,bx\n");
+    print_reg("bx",head);
+    printf(";end decrement\n");
+}
+
 void ajouter(int val, char* nom, sym_tab** head){
     
     sym_tab *cel = nouvelle_cellule();

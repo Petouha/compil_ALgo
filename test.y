@@ -24,7 +24,7 @@ void yyerror(const char* s){
 %token<entier> NUM
 %token<idf> IDF
 
-%token BEG END OPEN_ACCO CLOSE_ACCO VIRGULE SET INCR;
+%token BEG END OPEN_ACCO CLOSE_ACCO VIRGULE SET INCR DECR;
 
 %start S
 
@@ -54,6 +54,10 @@ code: //rien
     |INCR OPEN_ACCO IDF CLOSE_ACCO code
     {
         increment($3,liste);
+    };
+    |DECR OPEN_ACCO IDF CLOSE_ACCO code
+    {
+        decrement($3,liste);
     };
 
 %%
