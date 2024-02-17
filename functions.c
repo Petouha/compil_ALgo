@@ -96,6 +96,19 @@ void affectation(char* var1, char* var2,sym_tab* head){
     printf("\tstorew dx,ax\n");
 }
 
+void increment(char* nom,sym_tab* head){
+    printf(";increment : %s\n",nom);
+    print_param(nom,head);
+    get_param_from_stack(nom,head);
+    printf("\tconst ax,1\n");
+    printf("\tadd dx,ax\n");
+    printf("\tstorew dx,bx\n");
+    printf("\tcallprintfd bx\n");
+    printf("\tconst cx,nl\n");
+    printf("\tcallprintfs cx\n");
+    printf(";end increment\n");
+}
+
 void ajouter(int val, char* nom, sym_tab** head){
     
     sym_tab *cel = nouvelle_cellule();
@@ -137,6 +150,7 @@ sym_tab* recherche(char* nom, sym_tab* head){
     à partir de la base de la pile (qui contient le dernier paramètre), on ajoute
     le nombre de mot machines nécessaire pour atteindre l'adresse mémoire du paramètre.
     RESULTAT : DANS dx
+    ADRESSE DE LA VAR : DANS bx
 */
 void get_param_from_stack(char *nom,sym_tab* head){
     printf(";get_param_from_stack:%s\n",nom);
@@ -144,13 +158,13 @@ void get_param_from_stack(char *nom,sym_tab* head){
     printf("\tconst ax,%d\n",get_param_location(nom,head));
     printf("\tadd bx,ax\n");
     printf("\tloadw dx,bx\n");
+    printf(";end get_param\n");
 }
 
 void set_param_from_stack(char *nom, sym_tab* head){
+    printf(";set_param_from_stack : %s\n",nom);
     printf("\tloadw bx,sp\n");
     printf("\tconst ax,%d\n",get_param_location(nom,head));
-
-
 }
 
 int get_param_location(char *nom,sym_tab* head){

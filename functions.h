@@ -29,6 +29,8 @@ void start_asm();
 void end_asm();
 void err_div();
 void err_overflow();
+
+void increment(char* nom,sym_tab* head);
 void affectation(char* var1, char* var2,sym_tab* head);
 
 void set_param_from_stack(char *nom, sym_tab* head);

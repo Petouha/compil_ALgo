@@ -46,10 +46,14 @@ list_parameters:
 code: //rien 
     {
     }
-    | SET OPEN_ACCO IDF CLOSE_ACCO OPEN_ACCO IDF CLOSE_ACCO {
+    | SET OPEN_ACCO IDF CLOSE_ACCO OPEN_ACCO IDF CLOSE_ACCO code {
         affectation($3,$6,liste);
         printf("\tpop cx\n");
         printf("\tpush dx\n");
+    }
+    |INCR OPEN_ACCO IDF CLOSE_ACCO code
+    {
+        increment($3,liste);
     };
 
 %%
