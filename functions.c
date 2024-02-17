@@ -183,3 +183,14 @@ void print_param(char* nom,sym_tab* head){
     printf("\tcallprintfs cx\n");
     printf(";end print_param\n");
 }
+/*
+affiche le registre dont l'adresse est contenue dans le paramètre nom.
+NOTE: utilise le registre cx pour le retour à la ligne
+*/
+void print_reg(char *nom,sym_tab* head){
+    printf(";printing %s register\n",nom);
+    printf("\tcallprintfd %s\n",nom);
+    printf("\tconst cx,nl\n");
+    printf("\tcallprintfs cx\n");
+    printf(";%s register printed\n",nom);
+}
