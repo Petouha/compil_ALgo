@@ -5,6 +5,9 @@
 
 
 typedef enum {LOCAL_VAR,PARAM_VAR} TYPE_VAR;
+typedef enum {NUM_T, BOOL_T,IDF_T,ERR_T} TYPE_SYNTH;
+
+
 
 extern int param_number,local_number;
 typedef struct sym
