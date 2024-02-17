@@ -44,13 +44,20 @@ list_parameters:
     | VIRGULE IDF list_parameters{ajouter(PARAM_VAR,$2,&liste);num(param_number);param_number++;printf(";%s\n",$2);}; */
 
 code: //rien 
-      {get_param_from_stack("a",liste);}
+    {
+    }
     | SET OPEN_ACCO IDF CLOSE_ACCO OPEN_ACCO IDF CLOSE_ACCO {
-        
+        affectation($3,$6,liste);
+        printf("\tpop cx\n");
+        printf("\tpush dx\n");
     };
 
 %%
-
+/*
+    callprintfd dx
+	const ax,nl
+	callprintfs ax
+*/
 
 int main(void){
     liste=NULL;
