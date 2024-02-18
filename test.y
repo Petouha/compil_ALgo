@@ -19,12 +19,16 @@ void yyerror(const char* s){
 %union{
     int entier;
     char *idf;
+    TYPE_SYNTH synth;
 }
+
+%type<synth> EXPR
 
 %token<entier> NUM
 %token<idf> IDF
 
 %token BEG END OPEN_ACCO CLOSE_ACCO VIRGULE SET INCR DECR;
+%token ADD;
 
 %start S
 
@@ -43,14 +47,8 @@ list_parameters:
 /* list_parameters: 
     | VIRGULE IDF list_parameters{ajouter(PARAM_VAR,$2,&liste);num(param_number);param_number++;printf(";%s\n",$2);}; */
 
-code: //rien 
-    {
-    }
-    | SET OPEN_ACCO IDF CLOSE_ACCO OPEN_ACCO IDF CLOSE_ACCO code {
-        affectation($3,$6,liste);
-        printf("\tpop cx\n");
-        printf("\tpush dx\n");
-    }
+code: //rien
+    | SET_INSTRUCTION code
     |INCR OPEN_ACCO IDF CLOSE_ACCO code
     {
         increment($3,liste);
@@ -59,6 +57,8 @@ code: //rien
     {
         decrement($3,liste);
     };
+
+
 
 SET_INSTRUCTION:
     SET OPEN_ACCO IDF CLOSE_ACCO OPEN_ACCO IDF CLOSE_ACCO code {
