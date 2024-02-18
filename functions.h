@@ -93,6 +93,13 @@ UTILISE: ax,bx,dx
 void affectation(char *var1, char *var2, sym_tab *head);
 
 /*
+Affecte la valeur qui se trouve sur le haut de la pile dans
+la variable nom.
+UTILISE: ax,bx,dx
+*/
+void affect_from_top_stack(char *nom,sym_tab* head);
+
+/*
 Incremente la valeur de la variable nom.
 UTILISE: ax,bx,dx
 */

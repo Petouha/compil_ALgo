@@ -64,17 +64,13 @@ SET_INSTRUCTION:
     SET OPEN_ACCO IDF CLOSE_ACCO OPEN_ACCO IDF CLOSE_ACCO code {
         print_param($3,liste);
         affectation($3,$6,liste);
-        printf("\tpop cx\n");
-        printf("\tpush dx\n");
+        // printf("\tpop cx\n");
+        // printf("\tpush dx\n");
+        // printf("\tpush cx\n");
+
     }
     | SET OPEN_ACCO IDF CLOSE_ACCO OPEN_ACCO EXPR CLOSE_ACCO code{
-        printf("\tpop dx\n");
-        print_param($3,liste);
-        printf("\tloadw bx,sp\n");
-        printf("\tconst ax,%d\n",get_param_location($3,liste));
-        printf("\tadd bx,ax\n");
-        printf("\tstorew dx,bx\n");
-        print_param($3,liste);
+        affect_from_top_stack($3,liste);
     }
     ;
 

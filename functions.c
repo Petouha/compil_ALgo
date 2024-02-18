@@ -99,6 +99,16 @@ void affectation(char* var1, char* var2,sym_tab* head){
     printf("\tstorew dx,ax\n");
 }
 
+void affect_from_top_stack(char *nom,sym_tab* head){
+    printf("\tpop dx\n");
+    //print_param(nom,head);
+    printf("\tloadw bx,sp\n");
+    printf("\tconst ax,%d\n",get_param_location(nom,head));
+    printf("\tadd bx,ax\n");
+    printf("\tstorew dx,bx\n");
+    //print_param(nom,head);
+}
+
 void increment(char* nom,sym_tab* head){
     printf(";increment : %s\n",nom);
     get_param_from_stack(nom,head);
