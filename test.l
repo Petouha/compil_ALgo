@@ -1,4 +1,5 @@
 %{
+#include "functions.h"
 #include "test.tab.h"
 #include<stdio.h>
 #include<stdlib.h>
@@ -24,5 +25,6 @@
 
 "}" {return CLOSE_ACCO;}
 
+"+" {return ADD;}
 . {printf("non\n");}
 %%
