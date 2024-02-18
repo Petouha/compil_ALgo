@@ -70,13 +70,17 @@ SET_INSTRUCTION:
 
     }
     | SET OPEN_ACCO IDF CLOSE_ACCO OPEN_ACCO EXPR CLOSE_ACCO code{
+        //print_param($3,liste);
         affect_from_top_stack($3,liste);
+        print_param($3,liste);
+
     }
     ;
 
 
 EXPR: EXPR ADD EXPR {addition();$$=NUM_T;}
     | NUM{$$=NUM_T;num($1);};
+    | IDF{$$=IDF_T;get_param_from_stack($1,liste);printf("\tpush dx\n");}
 %%
 /*
     callprintfd dx
