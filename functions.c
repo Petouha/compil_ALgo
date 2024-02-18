@@ -188,7 +188,9 @@ int get_param_location(char *nom,sym_tab* head){
 }
 void print_param(char* nom,sym_tab* head){
     printf(";start print_param\n");
-    get_param_from_stack(nom,head);
+    printf("\tloadw bx,sp\n");
+    printf("\tconst cx,%d\n",get_param_location(nom,head));
+    printf("\tadd bx,cx\n");
     printf("\tcallprintfd bx\n");
     printf("\tconst cx,nl\n");
     printf("\tcallprintfs cx\n");
