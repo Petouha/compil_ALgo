@@ -19,31 +19,33 @@ void err_overflow(){
 }
 
 void start_asm(){
-printf("\tconst ax,debut\n");
-printf("\tjmp ax\n");
-printf(":nl\n");
-printf("@string \"\\n\"\n");
-err_div();
-err_overflow();
-printf(":debut\n");
-printf("\tconst bp,pile\n");
-printf("\tconst sp,pile\n");
-printf("\tconst ax,2\n");
-printf("\tsub sp,ax\n");
-printf(";Début du code effectué par yyparse()\n");
+    printf("\tconst ax,debut\n");
+    printf("\tjmp ax\n");
+    printf(":nl\n");
+    printf("@string \"\\n\"\n");
+    err_div();
+    err_overflow();
+    printf(":debut\n");
+    printf("\tconst bp,pile\n");
+    printf("\tconst sp,pile\n");
+    printf("\tconst ax,2\n");
+    printf("\tsub sp,ax\n");
+    printf(";Début du code effectué par yyparse()\n");
 }
 
 void end_asm(){
-printf(";Fin du code effectué par yyparse()\n");
-printf("\tcp ax,sp\n");
-printf("\tcallprintfd ax\n");
-printf("\tconst ax,nl\n");
-printf("\tcallprintfs ax\n");
-printf("\tpop ax\n");
-printf("\tend\n");
-printf(":pile\n");
-printf("@int 0\n");
+    printf(";Fin du code effectué par yyparse()\n");
+    printf("\tcp ax,sp\n");
+    printf("\tcallprintfd ax\n");
+    printf("\tconst ax,nl\n");
+    printf("\tcallprintfs ax\n");
+    printf("\tpop ax\n");
+    printf("\tend\n");
+    printf(":pile\n");
+    printf("@int 0\n");
 }
+
+
 
 
 void addition(){
@@ -51,25 +53,6 @@ void addition(){
     printf("\tpop bx\n");
     printf("\tconst cx,errOverflow\n");
     printf("\tadd ax,bx\n");
-    printf("\tjmpe cx\n");
-    printf("\tpush ax\n");
-}
-
-
-void division(){
-    printf("\tpop bx\n");
-    printf("\tpop ax\n");
-    printf("\tconst cx,errDiv0\n");
-    printf("\tdiv ax,bx\n");
-    printf("\tjmpe cx\n");
-    printf("\tpush ax\n");
-}
-
-void multiplication(){
-    printf("\tpop ax\n");
-    printf("\tpop bx\n");
-    printf("\tconst cx,errOverflow\n");
-    printf("\tmul ax,bx\n");
     printf("\tjmpe cx\n");
     printf("\tpush ax\n");
 }
@@ -82,10 +65,30 @@ void soustraction()
     printf("\tpush ax\n");
 }
 
+void multiplication(){
+    printf("\tpop ax\n");
+    printf("\tpop bx\n");
+    printf("\tconst cx,errOverflow\n");
+    printf("\tmul ax,bx\n");
+    printf("\tjmpe cx\n");
+    printf("\tpush ax\n");
+}
+
+void division(){
+    printf("\tpop bx\n");
+    printf("\tpop ax\n");
+    printf("\tconst cx,errDiv0\n");
+    printf("\tdiv ax,bx\n");
+    printf("\tjmpe cx\n");
+    printf("\tpush ax\n");
+}
+
+
 void num(int number){
     printf("\tconst ax,%d\n",number);
     printf("\tpush ax\n");
 }
+
 
 void affectation(char* var1, char* var2,sym_tab* head){
     printf(";affectation de %s = %s\n",var1,var2);
@@ -98,26 +101,32 @@ void affectation(char* var1, char* var2,sym_tab* head){
 
 void increment(char* nom,sym_tab* head){
     printf(";increment : %s\n",nom);
-    print_param(nom,head);
     get_param_from_stack(nom,head);
+    //print_reg("bx");
     printf("\tconst ax,1\n");
     printf("\tadd dx,ax\n");
     printf("\tstorew dx,bx\n");
-    printf("\tcallprintfd bx\n");
-    printf("\tconst cx,nl\n");
-    printf("\tcallprintfs cx\n");
+    //affiche le registre qui contient nom; print_reg("bx");
     printf(";end increment\n");
 }
 
 void decrement(char* nom,sym_tab* head){
     printf(";decrement : %s\n",nom);
     get_param_from_stack(nom,head);
-    print_reg("bx",head);
+    //print_reg("bx");
     printf("\tconst ax,1\n");
     printf("\tsub dx,ax\n");
     printf("\tstorew dx,bx\n");
-    print_reg("bx",head);
+    //affiche le registre qui contient nom; print_reg("bx");
     printf(";end decrement\n");
+}
+
+
+
+
+sym_tab* nouvelle_cellule() {
+    sym_tab* cel = (sym_tab*)malloc(sizeof(sym_tab));
+    return cel;
 }
 
 void ajouter(int val, char* nom, sym_tab** head){
@@ -131,9 +140,15 @@ void ajouter(int val, char* nom, sym_tab** head){
     cel->ptr = *head;
     *head = cel;
 }
-sym_tab* nouvelle_cellule() {
-    sym_tab* cel = (sym_tab*)malloc(sizeof(sym_tab));
-    return cel;
+
+sym_tab* recherche(char* nom, sym_tab* head){
+    while (head != NULL){
+        if (!strcmp(head->nom_idf,nom)){
+            break;
+        }
+        head=head->ptr;
+    }
+    return head;
 }
 
 void print_sym_tab(sym_tab *head){
@@ -147,22 +162,8 @@ void print_sym_tab(sym_tab *head){
     
 }
 
-sym_tab* recherche(char* nom, sym_tab* head){
-    while (head != NULL){
-        if (!strcmp(head->nom_idf,nom)){
-            break;
-        }
-        head=head->ptr;
-    }
-    return head;
-}
-/*
-    récupère depuis la pile un des paramètres (si il y en a) de l'algo.
-    à partir de la base de la pile (qui contient le dernier paramètre), on ajoute
-    le nombre de mot machines nécessaire pour atteindre l'adresse mémoire du paramètre.
-    RESULTAT : DANS dx
-    ADRESSE DE LA VAR : DANS bx
-*/
+
+
 void get_param_from_stack(char *nom,sym_tab* head){
     printf(";get_param_from_stack:%s\n",nom);
     printf("\tloadw bx,sp\n");
@@ -186,6 +187,8 @@ int get_param_location(char *nom,sym_tab* head){
     }
     return node->num_var*2;
 }
+
+
 void print_param(char* nom,sym_tab* head){
     printf(";start print_param\n");
     printf("\tloadw bx,sp\n");
@@ -196,11 +199,8 @@ void print_param(char* nom,sym_tab* head){
     printf("\tcallprintfs cx\n");
     printf(";end print_param\n");
 }
-/*
-affiche le registre dont l'adresse est contenue dans le paramètre nom.
-NOTE: utilise le registre cx pour le retour à la ligne
-*/
-void print_reg(char *nom,sym_tab* head){
+
+void print_reg(char *nom){
     printf(";printing %s register\n",nom);
     printf("\tcallprintfd %s\n",nom);
     printf("\tconst cx,nl\n");
