@@ -50,8 +50,16 @@ S : parameters code;
 parameters : OPEN_ACCO list_parameters CLOSE_ACCO {};
 
 list_parameters:
-    | IDF list_parameters {ajouter(PARAM_VAR,$1,&liste);num(param_number); param_number++;printf(";%s\n",$1);};
-    | VIRGULE list_parameters 
+    | IDF {
+        ajouter(PARAM_VAR,$1,&liste);
+        num(param_number);
+        param_number++;
+        printf(";%s\n",$1);}
+    | list_parameters VIRGULE IDF{
+        ajouter(PARAM_VAR,$3,&liste);
+        num(param_number);
+        param_number++;
+        printf(";%s\n",$3);};
 
 /* list_parameters: 
     | VIRGULE IDF list_parameters{ajouter(PARAM_VAR,$2,&liste);num(param_number);param_number++;printf(";%s\n",$2);}; */
@@ -81,18 +89,53 @@ SET_INSTRUCTION:
     | SET OPEN_ACCO IDF CLOSE_ACCO OPEN_ACCO EXPR CLOSE_ACCO code{
         print_param($3,liste);
         affect_from_top_stack($3,liste);
-        print_param($3,liste);
+        //print_param($3,liste);
 
     }
     ;
 
 
-EXPR: EXPR ADD EXPR {addition();$$=NUM_T;}
-    | EXPR SUB EXPR {soustraction();$$=NUM_T;}
+EXPR: EXPR ADD EXPR{
+    if(test_expr_int($1,$3) == ERR_T){
+            fprintf(stderr,"Type non compatible\n");
+            exit(EXIT_FAILURE);
+        } else {
+            $$=NUM_T;
+            addition();
+        }
+    }
+    | EXPR SUB EXPR {
+        if(test_expr_int($1,$3) == ERR_T){
+            fprintf(stderr,"Type non compatible\n");
+            exit(EXIT_FAILURE);
+        } else {
+            $$=NUM_T;
+            soustraction();
+        }
+    }
+    | EXPR MULT EXPR {
+        if(test_expr_int($1,$3) == ERR_T){
+            fprintf(stderr,"Type non compatible\n");
+            exit(EXIT_FAILURE);
+        } else {
+            $$=NUM_T;
+            multiplication();
+        }
+    }
+    | EXPR DIV EXPR {
+        if(test_expr_int($1,$3) == ERR_T){
+            fprintf(stderr,"Type non compatible\n");
+            exit(EXIT_FAILURE);
+        } else {
+            $$=NUM_T;
+            division();
+        }
+    }
+    | OPEN_PARENT EXPR CLOSE_PARENT{$$=$2;}
     | NUM {$$=NUM_T;num($1);};
     | FALSE {$$=BOOL_T;num(0);}
     | TRUE {$$=BOOL_T;num(1);}
-    | IDF {$$=IDF_T;get_param_from_stack($1,liste);printf("\tpush dx\n");}
+    | IDF {$$=NUM_T;get_param_from_stack($1,liste);printf("\tpush dx\n");}
 %%
 /*
     callprintfd dx
