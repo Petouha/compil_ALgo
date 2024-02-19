@@ -15,10 +15,6 @@
 "\\INCR"        {return INCR;}
 "\\DECR"        {return DECR;}
 
-[0-9]+ {yylval.entier=atoi(yytext);return NUM;}
-
-[a-zA-Z]+ {yylval.idf=strdup(yytext);return IDF;}
-
 "," {return VIRGULE;}
 
 "{" {return OPEN_ACCO;}
@@ -42,6 +38,10 @@
 
 "true" {return TRUE;}
 "false" {return FALSE;}
+
+[0-9]+ {yylval.entier=atoi(yytext);return NUM;}
+
+[a-zA-Z]+ {yylval.idf=strdup(yytext);return IDF;}
 
 . {printf("erreur de token,%s non reconnu\n",yytext);}
 %%
