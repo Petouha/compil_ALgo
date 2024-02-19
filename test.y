@@ -65,35 +65,31 @@ list_parameters:
     | VIRGULE IDF list_parameters{ajouter(PARAM_VAR,$2,&liste);num(param_number);param_number++;printf(";%s\n",$2);}; */
 
 code: //rien
-    | SET_INSTRUCTION code
+    | SET OPEN_ACCO IDF CLOSE_ACCO OPEN_ACCO EXPR CLOSE_ACCO code{
+        
+        print_param($3,liste);
+        affect_from_top_stack($3,liste);
+        print_param($3,liste);
+
+    }
     |INCR OPEN_ACCO IDF CLOSE_ACCO code
     {
+        if(recherche($3,liste) ==  NULL){
+            fprintf(stderr,"La variable \"%s\" n'existe pas\n",$3);
+            exit(EXIT_FAILURE);
+        }
+
         increment($3,liste);
+        print_param($3,liste);
     };
     |DECR OPEN_ACCO IDF CLOSE_ACCO code
     {
+        if(recherche($3,liste) ==  NULL){
+            fprintf(stderr,"La variable \"%s\" n'existe pas\n",$3);
+            exit(EXIT_FAILURE);
+        }
         decrement($3,liste);
     };
-
-
-
-SET_INSTRUCTION:
-    /* SET OPEN_ACCO IDF CLOSE_ACCO OPEN_ACCO IDF CLOSE_ACCO code {
-        print_param($3,liste);
-        affectation($3,$6,liste);
-        // printf("\tpop cx\n");
-        // printf("\tpush dx\n");
-        // printf("\tpush cx\n");
-
-    } */
-    | SET OPEN_ACCO IDF CLOSE_ACCO OPEN_ACCO EXPR CLOSE_ACCO code{
-        print_param($3,liste);
-        affect_from_top_stack($3,liste);
-        //print_param($3,liste);
-
-    }
-    ;
-
 
 EXPR: EXPR ADD EXPR{
     if(test_expr_int($1,$3) == ERR_T){
