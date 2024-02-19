@@ -27,8 +27,17 @@ void yyerror(const char* s){
 %token<entier> NUM
 %token<idf> IDF
 
-%token BEG END OPEN_ACCO CLOSE_ACCO VIRGULE SET INCR DECR;
-%token ADD;
+%token BEG END SET INCR DECR;
+%token OPEN_ACCO CLOSE_ACCO VIRGULE OPEN_PARENT CLOSE_PARENT;
+%token ADD SUB MULT DIV;
+%token DIF AND EGAL OR NOT TRUE FALSE;
+
+%left EGAL DIF
+%left OR
+%left AND
+%left NOT
+%left ADD SUB
+%left MULT DIV
 
 %start S
 
@@ -79,8 +88,11 @@ SET_INSTRUCTION:
 
 
 EXPR: EXPR ADD EXPR {addition();$$=NUM_T;}
-    | NUM{$$=NUM_T;num($1);};
-    | IDF{$$=IDF_T;get_param_from_stack($1,liste);printf("\tpush dx\n");}
+    | EXPR SUB EXPR {soustraction();$$=NUM_T;}
+    | NUM {$$=NUM_T;num($1);};
+    | FALSE {$$=BOOL_T;num(0);}
+    | TRUE {$$=BOOL_T;num(1);}
+    | IDF {$$=IDF_T;get_param_from_stack($1,liste);printf("\tpush dx\n");}
 %%
 /*
     callprintfd dx

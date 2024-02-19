@@ -25,6 +25,23 @@
 
 "}" {return CLOSE_ACCO;}
 
+"(" {return OPEN_PARENT;}
+
+")" {return CLOSE_PARENT;}
+
 "+" {return ADD;}
-. {printf("non\n");}
+"-" {return SUB;}
+"*" {return MULT;}
+"/" {return DIV;}
+
+"!=" {return DIF;}
+"&&" {return AND;}
+"==" {return EGAL;}
+"||" {return OR;}
+"!"  {return NOT;}
+
+"true" {return TRUE;}
+"false" {return FALSE;}
+
+. {printf("erreur de token,%s non reconnu\n",yytext);}
 %%
