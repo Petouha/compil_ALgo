@@ -8,6 +8,7 @@ typedef enum
     LOCAL_VAR,
     PARAM_VAR
 } TYPE_VAR;
+
 typedef enum
 {
     NUM_T,
@@ -48,8 +49,17 @@ void start_asm();
 Affiche le haut de la pile et termine le programme.
 */
 void end_asm();
+/*
+Teste si les deux paramètres sont de types NUM_T.
+RETOUR: NUM_T si oui, ERR_T sinon.
+*/
+int test_expr_int(int first, int second);
 
-
+/*
+Teste si les deux paramètres sont de types BOOL_T.
+RETOUR: BOOL_T si oui, ERR_T sinon.
+*/
+int test_expr_bool(int first, int second);
 
 /*
 Fait l'addition des 2 premières valeures sur la pile.

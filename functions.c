@@ -45,8 +45,17 @@ void end_asm(){
     printf("@int 0\n");
 }
 
+int test_expr_int(int first, int second){
+    if(first != NUM_T || second != NUM_T)
+        return ERR_T;
+    return NUM_T;
+}
 
-
+int test_expr_bool(int first, int second){
+    if(first != BOOL_T || second != BOOL_T)
+        return ERR_T;
+    return BOOL_T;
+}
 
 void addition(){
     printf("\tpop ax\n");
