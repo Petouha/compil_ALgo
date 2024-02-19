@@ -93,7 +93,7 @@ void num(int number){
 void affectation(char* var1, char* var2,sym_tab* head){
     printf(";affectation de %s = %s\n",var1,var2);
     get_param_from_stack(var2,head);
-    printf("\tloadw ax,sp\n");
+    printf("\tcp ax,bp\n");
     printf("\tconst bx,%d\n",get_param_location(var1,head));
     printf("\tadd ax,bx\n");
     printf("\tstorew dx,ax\n");
@@ -102,7 +102,7 @@ void affectation(char* var1, char* var2,sym_tab* head){
 void affect_from_top_stack(char *nom,sym_tab* head){
     printf("\tpop dx\n");
     //print_param(nom,head);
-    printf("\tloadw bx,sp\n");
+    printf("\tcp bx,bp\n");
     printf("\tconst ax,%d\n",get_param_location(nom,head));
     printf("\tadd bx,ax\n");
     printf("\tstorew dx,bx\n");
@@ -176,7 +176,7 @@ void print_sym_tab(sym_tab *head){
 
 void get_param_from_stack(char *nom,sym_tab* head){
     printf(";get_param_from_stack:%s\n",nom);
-    printf("\tloadw bx,sp\n");
+    printf("\tcp bx,bp\n");
     printf("\tconst ax,%d\n",get_param_location(nom,head));
     printf("\tadd bx,ax\n");
     printf("\tloadw dx,bx\n");
@@ -201,7 +201,7 @@ int get_param_location(char *nom,sym_tab* head){
 
 void print_param(char* nom,sym_tab* head){
     printf(";start print_param\n");
-    printf("\tloadw bx,sp\n");
+    printf("\tcp bx,bp\n");
     printf("\tconst cx,%d\n",get_param_location(nom,head));
     printf("\tadd bx,cx\n");
     printf("\tcallprintfd bx\n");
