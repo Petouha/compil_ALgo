@@ -5,6 +5,7 @@
 #include "functions.h"
 
 func_tab *liste;
+func_tab *current_fct;
 int param_number,local_number;
 int label_number = 0;
 
@@ -46,18 +47,18 @@ void yyerror(const char* s){
 
 S : starting_point parameters code;
 
-starting_point : BEG OPEN_ACCO IDF CLOSE_ACCO {ajouter_func($3,0,0,&liste);} ;
+starting_point : BEG OPEN_ACCO IDF CLOSE_ACCO {ajouter_func($3,0,0,&liste);current_fct=recherche_func($3,liste);} ;
 
-parameters : OPEN_ACCO list_parameters CLOSE_ACCO {};
+parameters : OPEN_ACCO list_parameters CLOSE_ACCO {current_fct->nbr_params=param_number;};
 
 list_parameters:
     | IDF {
-        ajouter(PARAM_VAR,$1,"main",liste);
+        ajouter(PARAM_VAR,$1,current_fct->nom_func,liste);
         num(param_number);
         param_number++;
         printf(";%s\n",$1);}
     | list_parameters VIRGULE IDF{
-        ajouter(PARAM_VAR,$3,"main",liste);
+        ajouter(PARAM_VAR,$3,current_fct->nom_func,liste);
         num(param_number);
         param_number++;
         printf(";%s\n",$3);};
@@ -71,29 +72,29 @@ code: //rien
         //     ajouter(LOCAL_VAR,$3,"main",liste);
         //     printf(";ajouter %s",$3);
         // }
-        print_param($3,liste->table);
+        print_param($3,current_fct->table);
 
         affect_from_top_stack($3,liste->table);
-        print_param($3,liste->table);
+        print_param($3,current_fct->table);
 
     }
     |INCR OPEN_ACCO IDF CLOSE_ACCO code
     {
-        if(recherche($3,liste->table) ==  NULL){
+        if(recherche($3,current_fct->table) ==  NULL){
             fprintf(stderr,"La variable \"%s\" n'existe pas\n",$3);
             exit(EXIT_FAILURE);
         }
 
-        increment($3,liste->table);
-        print_param($3,liste->table);
+        increment($3,current_fct->table);
+        print_param($3,current_fct->table);
     };
     |DECR OPEN_ACCO IDF CLOSE_ACCO code
     {
-        if(recherche($3,liste->table) ==  NULL){
+        if(recherche($3,current_fct->table) ==  NULL){
             fprintf(stderr,"La variable \"%s\" n'existe pas\n",$3);
             exit(EXIT_FAILURE);
         }
-        decrement($3,liste->table);
+        decrement($3,current_fct->table);
     };
 
 EXPR: EXPR ADD EXPR{
@@ -145,7 +146,7 @@ EXPR: EXPR ADD EXPR{
     | FALSE {$$=BOOL_T;num(0);}
     | TRUE {$$=BOOL_T;num(1);}
     | IDF {
-        get_param_from_stack($1,liste->table);
+        get_param_from_stack($1,current_fct->table);
         printf("\tpush dx\n");
         }
 %%
@@ -163,7 +164,7 @@ int main(void){
     start_asm();
     yyparse();
     end_asm();
-    printf(";Function : %s \n",liste->nom_func);
+    printf(";Function : %s + %d params\n",liste->nom_func,liste->nbr_params);
     print_sym_tab(liste->table);
     return 0;
 }
