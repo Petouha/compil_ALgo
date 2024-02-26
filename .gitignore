@@ -2,3 +2,5 @@ expr.asm
 test.gv
 test.py
 expr
+.gdb_history
+peda-session-test.txt
