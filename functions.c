@@ -148,14 +148,46 @@ sym_tab* nouvelle_cellule() {
     return cel;
 }
 
-void ajouter(int val, char* nom, sym_tab** head){
+func_tab *nouvelle_cellule_func(){
+    func_tab *cel = (func_tab*)malloc(sizeof(func_tab));
+    return cel;
+}
+
+void ajouter(int val, char* nom, char* nom_func, func_tab* head){
     
     sym_tab *cel = nouvelle_cellule();
-    if(cel == NULL)
+    if(cel == NULL){
+        perror("malloc");
         exit(EXIT_FAILURE);
-    strcpy(cel->nom_idf,nom);
+    }
+    func_tab *func = recherche_func(nom_func,head);
+    fprintf(stderr,"func->table :%p\n",(void *)func->table);
+    if (func == NULL) {
+        fprintf(stderr,"Function %s not found!",nom_func);
+        exit(EXIT_FAILURE);
+    }
+
+    cel->nom_idf=strdup(nom);
     cel->type = val;
     cel->num_var = (val == PARAM_VAR) ? param_number : local_number;
+    cel->ptr = func->table;
+    func->table = cel;
+    fprintf(stderr,"func->table :%p\n",(void *)func->table);
+
+}
+
+void ajouter_func(char *nom, int nbr_p, int nbr_v,func_tab **head){
+    func_tab *cel = nouvelle_cellule_func();
+    if(cel == NULL){
+        perror("malloc");
+        exit(EXIT_FAILURE);
+    }
+    
+
+    cel->nom_func=strdup(nom);
+    cel->nbr_params = nbr_p;
+    cel->nbr_locals = nbr_v;
+    cel->table =  NULL;
     cel->ptr = *head;
     *head = cel;
 }
@@ -163,6 +195,16 @@ void ajouter(int val, char* nom, sym_tab** head){
 sym_tab* recherche(char* nom, sym_tab* head){
     while (head != NULL){
         if (!strcmp(head->nom_idf,nom)){
+            break;
+        }
+        head=head->ptr;
+    }
+    return head;
+}
+
+func_tab *recherche_func(char *nom, func_tab *head){
+    while (head != NULL){
+        if (!strcmp(head->nom_func,nom)){
             break;
         }
         head=head->ptr;

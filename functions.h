@@ -17,9 +17,19 @@ typedef enum
 } TYPE_SYNTH;
 
 extern int param_number, local_number;
+
+typedef struct func_sym
+{
+    char* nom_func;
+    int nbr_params;
+    int nbr_locals;
+    struct sym *table;
+    struct func_sym *ptr;
+} func_tab;
+
 typedef struct sym
 {
-    char nom_idf[64];
+    char *nom_idf;
     TYPE_VAR type;
     int num_var;
     struct sym *ptr;
@@ -124,21 +134,36 @@ void decrement(char *nom, sym_tab *head);
 
 
 /*
-RETOUR : la nouvelle cellule crée par malloc (la gestion d'erreur se fait dans ajouter)
+RETOUR : la nouvelle cellule de sym_tab crée par malloc (la gestion d'erreur se fait dans ajouter)
 */
 sym_tab *nouvelle_cellule();
 
 /*
+RETOUR : la nouvelle cellule de func_tab crée par malloc (la gestion d'erreur se fait dans ajouter)
+*/
+func_tab *nouvelle_cellule_func();
+
+/*
 Ajoute en tête de liste la nouvelle cellule qui contient l'identifiant
 */
-void ajouter(int val, char *nom, sym_tab **head);
+void ajouter(int val, char *nom, char* nom_func,func_tab* head);
 
+/*
+Ajoute en tête de liste la nouvelle cellule qui contient la fonction
+*/
+void ajouter_func(char *nom, int nbr_p, int nbr_v,func_tab **head);
 
 /*
 Recherche l'identifiant dans la table des symboles
 RETOUR : la cellule si existe, NULL sinon 
 */
 sym_tab *recherche(char *nom, sym_tab *head);
+
+/*
+Recherche la fonction dans la table des symboles
+RETOUR : la cellule si existe, NULL sinon 
+*/
+func_tab *recherche_func(char *nom, func_tab *head);
 
 void print_sym_tab(sym_tab *head);
 
