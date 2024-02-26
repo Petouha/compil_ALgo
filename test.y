@@ -4,7 +4,7 @@
 #include <string.h>
 #include "functions.h"
 
-sym_tab *liste;
+func_tab *liste;
 int param_number,local_number;
 int label_number = 0;
 
@@ -44,55 +44,56 @@ void yyerror(const char* s){
 
 %%
 
-S : parameters code;
+S : starting_point parameters code;
 
-// starting_point : BEG OPEN_ACCO IDF CLOSE_ACCO ;
+starting_point : BEG OPEN_ACCO IDF CLOSE_ACCO {ajouter_func($3,0,0,&liste);} ;
 
 parameters : OPEN_ACCO list_parameters CLOSE_ACCO {};
 
 list_parameters:
     | IDF {
-        ajouter(PARAM_VAR,$1,&liste);
+        ajouter(PARAM_VAR,$1,"main",liste);
         num(param_number);
         param_number++;
         printf(";%s\n",$1);}
     | list_parameters VIRGULE IDF{
-        ajouter(PARAM_VAR,$3,&liste);
+        ajouter(PARAM_VAR,$3,"main",liste);
         num(param_number);
         param_number++;
         printf(";%s\n",$3);};
 
 /* list_parameters: 
-    | VIRGULE IDF list_parameters{ajouter(PARAM_VAR,$2,&liste);num(param_number);param_number++;printf(";%s\n",$2);}; */
+    | VIRGULE IDF list_parameters{ajouter(PARAM_VAR,$2,liste);num(param_number);param_number++;printf(";%s\n",$2);}; */
 
 code: //rien
     | SET OPEN_ACCO IDF CLOSE_ACCO OPEN_ACCO EXPR CLOSE_ACCO code{
-        if(recherche($3,liste) ==  NULL){
-            ajouter(LOCAL_VAR,$3,&liste);
-            printf(";ajouter %s",$3);
-        }
-        print_param($3,liste);
-        affect_from_top_stack($3,liste);
-        print_param($3,liste);
+        // if(recherche($3,liste) ==  NULL){
+        //     ajouter(LOCAL_VAR,$3,"main",liste);
+        //     printf(";ajouter %s",$3);
+        // }
+        print_param($3,liste->table);
+
+        affect_from_top_stack($3,liste->table);
+        print_param($3,liste->table);
 
     }
     |INCR OPEN_ACCO IDF CLOSE_ACCO code
     {
-        if(recherche($3,liste) ==  NULL){
+        if(recherche($3,liste->table) ==  NULL){
             fprintf(stderr,"La variable \"%s\" n'existe pas\n",$3);
             exit(EXIT_FAILURE);
         }
 
-        increment($3,liste);
-        print_param($3,liste);
+        increment($3,liste->table);
+        print_param($3,liste->table);
     };
     |DECR OPEN_ACCO IDF CLOSE_ACCO code
     {
-        if(recherche($3,liste) ==  NULL){
+        if(recherche($3,liste->table) ==  NULL){
             fprintf(stderr,"La variable \"%s\" n'existe pas\n",$3);
             exit(EXIT_FAILURE);
         }
-        decrement($3,liste);
+        decrement($3,liste->table);
     };
 
 EXPR: EXPR ADD EXPR{
@@ -144,7 +145,7 @@ EXPR: EXPR ADD EXPR{
     | FALSE {$$=BOOL_T;num(0);}
     | TRUE {$$=BOOL_T;num(1);}
     | IDF {
-        get_param_from_stack($1,liste);
+        get_param_from_stack($1,liste->table);
         printf("\tpush dx\n");
         }
 %%
@@ -156,10 +157,13 @@ EXPR: EXPR ADD EXPR{
 
 int main(void){
     liste=NULL;
+    /* ajouter_func("main",0,0,&liste); */
+    
 
     start_asm();
     yyparse();
     end_asm();
-    print_sym_tab(liste);
+    printf(";Function : %s \n",liste->nom_func);
+    print_sym_tab(liste->table);
     return 0;
 }
