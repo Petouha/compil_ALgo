@@ -51,6 +51,9 @@ void end_asm(){
 }
 
 void prepare_stack(func_tab *func){
+    printf("\tconst ax,0\n");
+    printf("\tpush ax\n");
+    printf("\t\n");
 
 }
 
