@@ -25,6 +25,11 @@ void start_asm(){
     printf("@string \"\\n\"\n");
     err_div();
     err_overflow();
+    /*Mettre toutes les fonctions ici*/
+    
+}
+
+void main_asm(){
     printf(":debut\n");
     printf("\tconst bp,pile\n");
     printf("\tconst sp,pile\n");
@@ -43,6 +48,10 @@ void end_asm(){
     printf("\tend\n");
     printf(":pile\n");
     printf("@int 0\n");
+}
+
+void prepare_stack(func_tab *func){
+
 }
 
 int test_expr_int(int first, int second){

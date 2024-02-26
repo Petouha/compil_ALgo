@@ -55,9 +55,23 @@ en entête.
 void start_asm();
 
 /*
+Permet de lancer le programme en exécutant la fonction donné.
+*/
+void main_asm();
+
+/*
 Affiche le haut de la pile et termine le programme.
 */
 void end_asm();
+
+/*
+Préparer la pile pour l'appel de fonction:
+-Empiler 0 pour réserver la valeur de retour
+-Empiler tous les paramètres de la fonction
+-Empiler tous les variables locales de la fonction
+*/
+void prepare_stack(func_tab *func);
+
 /*
 Teste si les deux paramètres sont de types NUM_T.
 RETOUR: NUM_T si oui, ERR_T sinon.
