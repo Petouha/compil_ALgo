@@ -13,7 +13,6 @@ typedef enum
 {
     NUM_T,
     BOOL_T,
-    IDF_T,
     ERR_T
 } TYPE_SYNTH;
 

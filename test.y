@@ -6,6 +6,7 @@
 
 sym_tab *liste;
 int param_number,local_number;
+int label_number = 0;
 
 int yylex();  
 void yyerror(const char* s){
@@ -66,7 +67,10 @@ list_parameters:
 
 code: //rien
     | SET OPEN_ACCO IDF CLOSE_ACCO OPEN_ACCO EXPR CLOSE_ACCO code{
-        
+        if(recherche($3,liste) ==  NULL){
+            ajouter(LOCAL_VAR,$3,&liste);
+            printf(";ajouter %s",$3);
+        }
         print_param($3,liste);
         affect_from_top_stack($3,liste);
         print_param($3,liste);
@@ -127,11 +131,22 @@ EXPR: EXPR ADD EXPR{
             division();
         }
     }
+    | EXPR AND EXPR {
+        if(test_expr_bool($1,$3) == ERR_T){
+            $$=ERR_T;
+        } else {
+            $$=BOOL_T;
+            multiplication();
+        }
+    }
     | OPEN_PARENT EXPR CLOSE_PARENT{$$=$2;}
     | NUM {$$=NUM_T;num($1);};
     | FALSE {$$=BOOL_T;num(0);}
     | TRUE {$$=BOOL_T;num(1);}
-    | IDF {$$=NUM_T;get_param_from_stack($1,liste);printf("\tpush dx\n");}
+    | IDF {
+        get_param_from_stack($1,liste);
+        printf("\tpush dx\n");
+        }
 %%
 /*
     callprintfd dx

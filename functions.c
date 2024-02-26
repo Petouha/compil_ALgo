@@ -155,7 +155,7 @@ void ajouter(int val, char* nom, sym_tab** head){
         exit(EXIT_FAILURE);
     strcpy(cel->nom_idf,nom);
     cel->type = val;
-    cel->num_var=(val == PARAM_VAR) ? param_number : local_number;
+    cel->num_var = (val == PARAM_VAR) ? param_number : local_number;
     cel->ptr = *head;
     *head = cel;
 }
