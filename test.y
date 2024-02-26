@@ -45,7 +45,7 @@ void yyerror(const char* s){
 
 %%
 
-S : starting_point parameters code;
+S : starting_point parameters code {};
 
 starting_point : BEG OPEN_ACCO IDF CLOSE_ACCO {ajouter_func($3,0,0,&liste);current_fct=recherche_func($3,liste);} ;
 
@@ -162,6 +162,7 @@ int main(void){
     
 
     start_asm();
+    main_asm();
     yyparse();
     end_asm();
     printf(";Function : %s + %d params\n",liste->nom_func,liste->nbr_params);
