@@ -2,7 +2,7 @@ SHELL=/bin/sh
 LEX=flex
 YACC=bison
 CC=gcc
-CFLAGS=-g -std=c11 -pedantic -Wall
+CFLAGS=-g -std=c11 -pedantic -Wall -D_POSIX_C_SOURCE=200809L
 INC_DIR = ./src
 SRC_DIR = ./src
 LDFLAGS=
