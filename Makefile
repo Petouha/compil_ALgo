@@ -20,7 +20,7 @@ vpath %.h $(INC_DIR)
 vpath %.c $(SRC_DIR)
 
 
-$(PROG): lex.yy.o $(PROG).tab.o functions.o
+$(PROG): lex.yy.o $(PROG).tab.o functions.o intermediare.o
 	$(CC) $+ -o $@ $(LDFLAGS) 
 
 lex.yy.c: $(PROG).l $(PROG).tab.h
