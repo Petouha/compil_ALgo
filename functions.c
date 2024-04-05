@@ -173,7 +173,6 @@ void ajouter(int val, char* nom, char* nom_func, func_tab* head){
         exit(EXIT_FAILURE);
     }
     func_tab *func = recherche_func(nom_func,head);
-    fprintf(stderr,"func->table :%p\n",(void *)func->table);
     if (func == NULL) {
         fprintf(stderr,"Function %s not found!",nom_func);
         exit(EXIT_FAILURE);
@@ -184,7 +183,6 @@ void ajouter(int val, char* nom, char* nom_func, func_tab* head){
     cel->num_var = (val == PARAM_VAR) ? param_number : local_number;
     cel->ptr = func->table;
     func->table = cel;
-    fprintf(stderr,"func->table :%p\n",(void *)func->table);
 
 }
 
