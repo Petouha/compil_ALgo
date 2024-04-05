@@ -4,3 +4,9 @@ test.py
 expr
 .gdb_history
 peda-session-test.txt
+err.asipro.log
+*.o
+gmon.out
+lex.*
+test.tab*
+test
