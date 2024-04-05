@@ -43,5 +43,7 @@
 
 [a-zA-Z]+ {yylval.idf=strdup(yytext);return IDF;}
 
+[[:blank:]]+ {;}
+
 . {printf("erreur de token,%s non reconnu\n",yytext);}
 %%
