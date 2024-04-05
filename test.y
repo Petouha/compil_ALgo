@@ -32,7 +32,7 @@ void yyerror(const char* s){
 %token<entier> NUM
 %token<idf> IDF
 
-%token BEG END SET INCR DECR;
+%token BEG END SET INCR DECR CALL;
 %token OPEN_ACCO CLOSE_ACCO VIRGULE OPEN_PARENT CLOSE_PARENT;
 %token ADD SUB MULT DIV;
 %token DIF AND EGAL OR NOT TRUE FALSE;
@@ -49,13 +49,14 @@ void yyerror(const char* s){
 %%
 
 S : |
-   function parameters code S call;
+   function parameters code END S call_func;
 
 function : BEG OPEN_ACCO IDF CLOSE_ACCO{
     ajouter_func($3,0,0,&liste);
     current_fct=recherche_func($3,liste);
 
     add_intermediare(&inter,FUNC_OP,ARG,$3);
+    param_number=0;
     } ;
 
 parameters : OPEN_ACCO list_parameters CLOSE_ACCO {current_fct->nbr_params=param_number;};
@@ -185,7 +186,28 @@ EXPR: EXPR ADD EXPR{
         get_param_from_stack($1,current_fct->table);
         printf("\tpush dx\n");
         }
-call : 
+
+call_func : call call_params;
+
+call : CALL OPEN_ACCO IDF CLOSE_ACCO{
+    if(recherche_func($3,liste) == NULL){
+        fprintf(stderr,"La fonction \"%s\" n'existe pas\n",$3);
+        exit(EXIT_FAILURE);
+    }
+    param_number=0;
+    current_fct=recherche_func($3,liste);
+    }
+    ;
+call_params : OPEN_ACCO call_param CLOSE_ACCO{
+    if(param_number != current_fct->nbr_params){
+        fprintf(stderr,"Nombre de parametres incorrect\n");
+        exit(EXIT_FAILURE);
+    }
+    }
+    ;
+call_param: 
+    NUM {param_number++;}
+    | call_param VIRGULE NUM{param_number++;};
 %%
 /*
     callprintfd dx
