@@ -32,7 +32,7 @@ void yyerror(const char* s){
 %token<entier> NUM
 %token<idf> IDF
 
-%token BEG END SET INCR DECR CALL;
+%token BEG END SET INCR DECR CALL RET;
 %token OPEN_ACCO CLOSE_ACCO VIRGULE OPEN_PARENT CLOSE_PARENT;
 %token ADD SUB MULT DIV;
 %token DIF AND EGAL OR NOT TRUE FALSE;
@@ -49,30 +49,33 @@ void yyerror(const char* s){
 %%
 
 S : |
-   function parameters code END S call_func;
+   function parameters code end_function S call_func;
 
 function : BEG OPEN_ACCO IDF CLOSE_ACCO{
     ajouter_func($3,0,0,&liste);
     current_fct=recherche_func($3,liste);
 
-    add_intermediare(&inter,FUNC_OP,ARG,$3);
+    add_intermediare(&inter,FUNC_OP,ARG,$3,current_fct);
     param_number=0;
-    } ;
-
-parameters : OPEN_ACCO list_parameters CLOSE_ACCO {current_fct->nbr_params=param_number;};
+    local_number=0;
+    };
+end_function : RET OPEN_ACCO IDF CLOSE_ACCO END{
+    add_intermediare(&inter,RET_OP,ARG,$3,current_fct);
+    };
+parameters : OPEN_ACCO list_parameters CLOSE_ACCO {current_fct->nbr_params=param_number;add_intermediare(&inter,NUL_OP,OP,NULL,current_fct);};
 
 list_parameters:
     | IDF {
+        fprintf(stderr,"%s\n",$1);
         ajouter(PARAM_VAR,$1,current_fct->nom_func,liste);
-        num(param_number);
         param_number++;
-        printf(";%s\n",$1);
+        add_intermediare(&inter,TEST_OP,OP,NULL,current_fct);;
         }
     | list_parameters VIRGULE IDF{
+        fprintf(stderr,"%s\n",$3);
         ajouter(PARAM_VAR,$3,current_fct->nom_func,liste);
-        num(param_number);
         param_number++;
-        printf(";%s\n",$3);
+        add_intermediare(&inter,TEST_OP,OP,NULL,current_fct);
         };
 code: instr code | ;
 
@@ -80,16 +83,17 @@ instr: SET OPEN_ACCO IDF CLOSE_ACCO OPEN_ACCO EXPR CLOSE_ACCO{
         if(recherche($3,current_fct->table) ==  NULL){
             ajouter(LOCAL_VAR,$3,current_fct->nom_func
             ,current_fct);
-            printf(";ajouter %s",$3);
+            local_number++;
+            current_fct->nbr_locals++;
         }
-        print_param($3,current_fct->table);
+        //print_param($3,current_fct->table);
 
-        affect_from_top_stack($3,liste->table);
-        print_param($3,current_fct->table);
+        //affect_from_top_stack($3,liste->table);
+        //print_param($3,current_fct->table);
 
         fprintf(stderr,"affect %s = \n",$3);
 
-        add_intermediare(&inter,SET_OP,ARG,$3);
+        add_intermediare(&inter,SET_OP,ARG,$3,current_fct);
         }
     |INCR OPEN_ACCO IDF CLOSE_ACCO
     {
@@ -98,10 +102,10 @@ instr: SET OPEN_ACCO IDF CLOSE_ACCO OPEN_ACCO EXPR CLOSE_ACCO{
             exit(EXIT_FAILURE);
         }
 
-        increment($3,current_fct->table);
-        print_param($3,current_fct->table);
+        //increment($3,current_fct->table);
+        //print_param($3,current_fct->table);
 
-        add_intermediare(&inter,INCR_OP,ARG,$3);
+        add_intermediare(&inter,INCR_OP,ARG,$3,current_fct);
     };
     |DECR OPEN_ACCO IDF CLOSE_ACCO
     {
@@ -109,8 +113,8 @@ instr: SET OPEN_ACCO IDF CLOSE_ACCO OPEN_ACCO EXPR CLOSE_ACCO{
             fprintf(stderr,"La variable \"%s\" n'existe pas\n",$3);
             exit(EXIT_FAILURE);
         }
-        decrement($3,current_fct->table);
-        add_intermediare(&inter,DECR_OP,ARG,$3);
+        //decrement($3,current_fct->table);
+        add_intermediare(&inter,DECR_OP,ARG,$3,current_fct);
     };
 
 EXPR: EXPR ADD EXPR{
@@ -120,8 +124,8 @@ EXPR: EXPR ADD EXPR{
         } else {
             $$=NUM_T;
 
-            add_intermediare(&inter,ADD_OP,OP,NULL);
-            addition();
+            add_intermediare(&inter,ADD_OP,OP,NULL,current_fct);
+            //addition();
         }
     }
     | EXPR SUB EXPR {
@@ -130,8 +134,8 @@ EXPR: EXPR ADD EXPR{
             exit(EXIT_FAILURE);
         } else {
             $$=NUM_T;
-            soustraction();
-            add_intermediare(&inter,SUB_OP,OP,NULL);
+            //soustraction();
+            add_intermediare(&inter,SUB_OP,OP,NULL,current_fct);
         }
     }
     | EXPR MULT EXPR {
@@ -140,9 +144,9 @@ EXPR: EXPR ADD EXPR{
             exit(EXIT_FAILURE);
         } else {
             $$=NUM_T;
-            multiplication();
+            //multiplication();
 
-            add_intermediare(&inter,MUL_OP,OP,NULL);
+            add_intermediare(&inter,MUL_OP,OP,NULL,current_fct);
         }
     }
     | EXPR DIV EXPR {
@@ -151,9 +155,9 @@ EXPR: EXPR ADD EXPR{
             exit(EXIT_FAILURE);
         } else {
             $$=NUM_T;
-            division();
+            //division();
 
-            add_intermediare(&inter,DIV_OP,OP,NULL);
+            add_intermediare(&inter,DIV_OP,OP,NULL,current_fct);
         }
     }
     | EXPR AND EXPR {
@@ -161,16 +165,17 @@ EXPR: EXPR ADD EXPR{
             $$=ERR_T;
         } else {
             $$=BOOL_T;
-            multiplication();
+            //multiplication();
 
-            add_intermediare(&inter,AND_OP,OP,NULL);
+            add_intermediare(&inter,AND_OP,OP,NULL,current_fct);
         }
     }
     | OPEN_PARENT EXPR CLOSE_PARENT{$$=$2;}
     | NUM {
-        $$=NUM_T;num($1);
+        $$=NUM_T;
+        //num($1);
         sprintf(tmp,"%d",$1);
-        add_intermediare(&inter,NUM_OP,ARG,tmp);
+        add_intermediare(&inter,NUM_OP,ARG,tmp,current_fct);
         };
     | FALSE {$$=BOOL_T;num(0);}
     | TRUE {$$=BOOL_T;num(1);}
@@ -181,13 +186,13 @@ EXPR: EXPR ADD EXPR{
             exit(EXIT_FAILURE);
         }
         
-        add_intermediare(&inter,IDF_OP,ARG,$1);
+        add_intermediare(&inter,IDF_OP,ARG,$1,current_fct);
 
-        get_param_from_stack($1,current_fct->table);
-        printf("\tpush dx\n");
+        //get_param_from_stack($1,current_fct->table);
+        //printf("\tpush dx\n");
         }
 
-call_func : call call_params;
+call_func : call call_params {};
 
 call : CALL OPEN_ACCO IDF CLOSE_ACCO{
     if(recherche_func($3,liste) == NULL){
@@ -196,18 +201,28 @@ call : CALL OPEN_ACCO IDF CLOSE_ACCO{
     }
     param_number=0;
     current_fct=recherche_func($3,liste);
+
+    add_intermediare(&inter,CALL_OP,OP,NULL,current_fct);
     }
     ;
 call_params : OPEN_ACCO call_param CLOSE_ACCO{
     if(param_number != current_fct->nbr_params){
         fprintf(stderr,"Nombre de parametres incorrect\n");
-        exit(EXIT_FAILURE);
-    }
+        exit(EXIT_FAILURE);}
+    add_intermediare(&inter,CALLEND_OP,OP,NULL,current_fct);
+    // Dépiler le nombre de variables locales + paramètres
     }
     ;
 call_param: 
-    NUM {param_number++;}
-    | call_param VIRGULE NUM{param_number++;};
+    NUM {
+        param_number++;
+        sprintf(tmp,"%d",$1);
+        add_intermediare(&inter,NUM_OP,ARG,tmp,current_fct);}
+    | call_param VIRGULE NUM{
+        param_number++;
+        sprintf(tmp,"%d",$3);
+        add_intermediare(&inter,NUM_OP,ARG,tmp,current_fct);
+        };
 %%
 /*
     callprintfd dx
@@ -218,15 +233,10 @@ call_param:
 int main(void){
     liste=NULL;
     inter=NULL;
-    /* ajouter_func("main",0,0,&liste); */
-    
-
-    start_asm();
-    main_asm();
     yyparse();
-    end_asm();
-    printf(";Function : %s + %d params\n",liste->nom_func,liste->nbr_params);
-    print_sym_tab(liste->table);
     print_intermediare(inter);
+    generate_intermediare(inter);
+    print_sym_tab(liste->table);
+    free_intermediare(inter);
     return 0;
 }
