@@ -14,6 +14,8 @@
 "\\SET"         {return SET;}
 "\\INCR"        {return INCR;}
 "\\DECR"        {return DECR;}
+"\\CALL"        {return CALL;}
+"\\RETURN"      {return RET;}
 
 "," {return VIRGULE;}
 
