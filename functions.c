@@ -35,27 +35,52 @@ void main_asm(){
     printf("\tconst sp,pile\n");
     printf("\tconst ax,2\n");
     printf("\tsub sp,ax\n");
-    printf(";Début du code effectué par yyparse()\n");
 }
 
 void end_asm(){
-    printf(";Fin du code effectué par yyparse()\n");
     printf("\tcp ax,sp\n");
     printf("\tcallprintfd ax\n");
     printf("\tconst ax,nl\n");
     printf("\tcallprintfs ax\n");
-    printf("\tpop ax\n");
+    //printf("\tpop ax\n");
     printf("\tend\n");
     printf(":pile\n");
     printf("@int 0\n");
 }
 
-void prepare_stack(func_tab *func){
-    printf("\tconst ax,0\n");
-    printf("\tpush ax\n");
-    printf("\t\n");
+void prepare_stack_locals(func_tab *func){
+    // Variables locales
+    printf(";Variables locales\n");
+    for (int i = 0; i < func->nbr_locals; i++){
+        printf(";ajout de la v_loc : %d\n",i);
+        printf("\tconst ax,0\n");
+        printf("\tpush ax\n");
+    }
 
 }
+
+void prepare_stack_params(func_tab *func){
+    // Valeur de retour
+    printf(";Valeur de retour\n");
+    printf("\tconst ax,0\n");
+    printf("\tpush ax\n");
+    printf(";Paramètres\n");
+    // Paramètres de la fonction mis dans le sens inital :
+    // empiler 1, 2, 3...
+    for (int i = 0; i < func->nbr_params; i++){   
+        printf(";ajout du param : %d\n",i);
+        printf("\tconst ax,%d\n",i*2);
+        printf("\tadd ax,bp\n");
+        printf("\tloadw bx,ax\n");
+        printf("\tpush bx\n");
+    }
+    printf(";Fin des paramètres\n");
+}
+
+void prepare_stack_func(func_tab *func){
+    printf("\tpush bp\n");
+    printf("\tcp bp,sp\n");
+    }
 
 int test_expr_int(int first, int second){
     if(first != NUM_T || second != NUM_T)
@@ -111,26 +136,26 @@ void num(int number){
 }
 
 
-void affectation(char* var1, char* var2,sym_tab* head){
-    printf(";affectation de %s = %s\n",var1,var2);
-    get_param_from_stack(var2,head);
-    printf("\tcp ax,bp\n");
-    printf("\tconst bx,%d\n",get_param_location(var1,head));
-    printf("\tadd ax,bx\n");
-    printf("\tstorew dx,ax\n");
-}
+// void affectation(char* var1, char* var2,func_tab* head){
+//     printf(";affectation de %s = %s\n",var1,var2);
+//     get_param_from_stack(var2,head);
+//     printf("\tcp ax,bp\n");
+//     printf("\tconst bx,%d\n",get_param_location(var1,head));
+//     printf("\tadd ax,bx\n");
+//     printf("\tstorew dx,ax\n");
+// }
 
-void affect_from_top_stack(char *nom,sym_tab* head){
+void affect_from_top_stack(char *nom,func_tab* head){
     printf("\tpop dx\n");
     //print_param(nom,head);
     printf("\tcp bx,bp\n");
     printf("\tconst ax,%d\n",get_param_location(nom,head));
-    printf("\tadd bx,ax\n");
+    printf("\tsub bx,ax\n");
     printf("\tstorew dx,bx\n");
     //print_param(nom,head);
 }
 
-void increment(char* nom,sym_tab* head){
+void increment(char* nom,func_tab* head){
     printf(";increment : %s\n",nom);
     get_param_from_stack(nom,head);
     //print_reg("bx");
@@ -141,7 +166,7 @@ void increment(char* nom,sym_tab* head){
     printf(";end increment\n");
 }
 
-void decrement(char* nom,sym_tab* head){
+void decrement(char* nom,func_tab* head){
     printf(";decrement : %s\n",nom);
     get_param_from_stack(nom,head);
     //print_reg("bx");
@@ -235,32 +260,35 @@ void print_sym_tab(sym_tab *head){
 
 
 
-void get_param_from_stack(char *nom,sym_tab* head){
-    printf(";get_param_from_stack:%s\n",nom);
+void get_param_from_stack(char *nom,func_tab *head){
+    printf(";Récupérer le paramètre:%s\n",nom);
     printf("\tcp bx,bp\n");
     printf("\tconst ax,%d\n",get_param_location(nom,head));
-    printf("\tadd bx,ax\n");
+    printf("\tsub bx,ax\n");
     printf("\tloadw dx,bx\n");
+    printf("\tpush dx\n");
     printf(";end get_param\n");
 }
 
-void set_param_from_stack(char *nom, sym_tab* head){
+void set_param_from_stack(char *nom, func_tab* head){
     printf(";set_param_from_stack : %s\n",nom);
     printf("\tloadw bx,sp\n");
     printf("\tconst ax,%d\n",get_param_location(nom,head));
 }
 
-int get_param_location(char *nom,sym_tab* head){
-    sym_tab *node = recherche(nom,head);
+int get_param_location(char *nom,func_tab *head){
+    sym_tab *node = recherche(nom,head->table);
     if(node == NULL){
         perror("recherche");
         exit(EXIT_FAILURE);
     }
-    return node->num_var*2;
+    if(node->type == PARAM_VAR)
+        return -2 - 2*head->nbr_locals - 2*head->nbr_params + node->num_var*2;
+    return -2 - 2*head->nbr_locals + node->num_var*2;
 }
 
 
-void print_param(char* nom,sym_tab* head){
+void print_param(char* nom,func_tab* head){
     printf(";start print_param\n");
     printf("\tcp bx,bp\n");
     printf("\tconst cx,%d\n",get_param_location(nom,head));
@@ -277,4 +305,20 @@ void print_reg(char *nom){
     printf("\tconst cx,nl\n");
     printf("\tcallprintfs cx\n");
     printf(";%s register printed\n",nom);
+}
+
+void return_from_func(func_tab *head, char *nom){
+    // Mettre la valeur de retour
+    // Marche uniquement si la valeur de retour est une variable
+    get_param_from_stack(nom,head);
+    printf("\tpop ax\n");
+    int n = -4 - head->nbr_locals * 2 - head->nbr_params * 2;
+    printf("\tconst bx,%d\n",n);
+    printf("\tsub bx,bp\n");
+    printf("\tstorew ax,bx\n");
+
+    // Restaurer la base de la pile
+    printf("\tcp sp,bp\n");
+    printf("\tpop bp\n");
+    printf("\tret\n");
 }

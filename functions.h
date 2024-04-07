@@ -1,3 +1,5 @@
+#ifndef FUNCTIONS_H 
+#define FUNCTIONS_H
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -65,14 +67,6 @@ Affiche le haut de la pile et termine le programme.
 void end_asm();
 
 /*
-Préparer la pile pour l'appel de fonction:
--Empiler 0 pour réserver la valeur de retour
--Empiler tous les paramètres de la fonction
--Empiler tous les variables locales de la fonction
-*/
-void prepare_stack(func_tab *func);
-
-/*
 Teste si les deux paramètres sont de types NUM_T.
 RETOUR: NUM_T si oui, ERR_T sinon.
 */
@@ -123,26 +117,26 @@ Affecte la valeur de var2 à var1.
 Uniquement pour l'affectation IDF = IDF.
 UTILISE: ax,bx,dx
 */
-void affectation(char *var1, char *var2, sym_tab *head);
+void affectation(char *var1, char *var2, func_tab *head);
 
 /*
 Affecte la valeur qui se trouve sur le haut de la pile dans
 la variable nom.
 UTILISE: ax,bx,dx
 */
-void affect_from_top_stack(char *nom,sym_tab* head);
+void affect_from_top_stack(char *nom,func_tab* head);
 
 /*
 Incremente la valeur de la variable nom.
 UTILISE: ax,bx,dx
 */
-void increment(char *nom, sym_tab *head);
+void increment(char *nom, func_tab *head);
 
 /*
 Décremente la valeur de la variable nom.
 UTILISE: ax,bx,dx
 */
-void decrement(char *nom, sym_tab *head);
+void decrement(char *nom, func_tab *head);
 
 
 
@@ -191,24 +185,50 @@ void print_sym_tab(sym_tab *head);
     ADRESSE DE LA VAR : DANS bx
     UTILISE : ax,bx,dx
 */
-void get_param_from_stack(char *nom, sym_tab *head);
+void get_param_from_stack(char *nom, func_tab *head);
 
 
-void set_param_from_stack(char *nom, sym_tab *head);
+void set_param_from_stack(char *nom, func_tab *head);
 
 /*
 Recupère la position du paramètre sur la pile en utilisant la table des symboles
 */
-int get_param_location(char *nom, sym_tab *head);
+int get_param_location(char *nom, func_tab *head);
 
 /*
 Affiche un paramètre depuis la pile
 UTILISE: bx, cx
 */
-void print_param(char *nom, sym_tab *head);
+void print_param(char *nom, func_tab *head);
 
 /*
 affiche le registre dont l'adresse est contenue dans le paramètre nom.
 UTILISE: cx et le registre contenue dans nom
 */
 void print_reg(char *nom);
+
+/*
+Prépare la 1ère partie de la pile d'execution avant un appel de fonction:
+- Empile 0 pour la valeur de retour
+- Empile les variables locales de la fonction
+*/
+void prepare_stack_locals(func_tab *func);
+
+/*
+Prépare la 2ème partie de la pile d'execution avant un appel de fonction:
+- Empile les paramètres de la fonction
+- Effectue un call en asipro
+*/
+void prepare_stack_params(func_tab *func);
+
+/*
+Prépare la 3ème partie de la pile d'execution après un appel de fonction:
+- Empile le retour de la fonction (fait automatiquement par asipro)
+- Empile l'ancienne base de la pile
+- Monter la base de la pile
+*/
+void prepare_stack_func(func_tab *func);
+
+
+void return_from_func(func_tab *func, char* nom);
+#endif
