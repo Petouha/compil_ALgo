@@ -123,9 +123,9 @@ void choose_op(intermediare *node){
             printf("\tcall ax\n");
             printf(";end callend\n");
             printf(";Dépiler le nombre de variables locales + paramètres\n");
-            for (int i = 0; i < node->function->nbr_locals + node->function->nbr_params; i++){
-            printf("\tpop ax\n");
-        }
+            for (int i = 0; i < node->function->nbr_locals + node->function->nbr_params; i++)
+                printf("\tpop ax\n");
+            printf(";Fin de la dépilement\n");
             end_asm();
             break;
         case RET_OP:
