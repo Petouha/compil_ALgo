@@ -283,8 +283,8 @@ int get_param_location(char *nom,func_tab *head){
         exit(EXIT_FAILURE);
     }
     if(node->type == PARAM_VAR)
-        return -2 - 2*head->nbr_locals - 2*head->nbr_params + node->num_var*2;
-    return -2 - 2*head->nbr_locals + node->num_var*2;
+        return 2 + 2*head->nbr_locals + 2*head->nbr_params - node->num_var*2;
+    return 2 + 2*head->nbr_locals - node->num_var*2;
 }
 
 
@@ -311,10 +311,11 @@ void return_from_func(func_tab *head, char *nom){
     // Mettre la valeur de retour
     // Marche uniquement si la valeur de retour est une variable
     get_param_from_stack(nom,head);
+    printf("\tcp bx,bp\n");
     printf("\tpop ax\n");
-    int n = -4 - head->nbr_locals * 2 - head->nbr_params * 2;
-    printf("\tconst bx,%d\n",n);
-    printf("\tsub bx,bp\n");
+    int n = 4 + head->nbr_locals * 2 + head->nbr_params * 2;
+    printf("\tconst cx,%d\n",n);
+    printf("\tsub bx,cx\n");
     printf("\tstorew ax,bx\n");
 
     // Restaurer la base de la pile
