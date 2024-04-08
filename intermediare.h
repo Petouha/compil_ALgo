@@ -28,6 +28,7 @@ typedef enum operation{
     CALLEND_OP, //15
     RET_OP, //16
     TEST_OP, //17
+    ARG_OP, //18
 } operation;
 
 // enum pour différencier entre les deux types d'arguments

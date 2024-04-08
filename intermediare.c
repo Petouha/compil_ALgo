@@ -114,14 +114,17 @@ void choose_op(intermediare *node){
             break;
         case CALL_OP:
             main_asm();
+            // Valeur de retour
+            printf(";Valeur de retour\n");
+            printf("\tconst ax,0\n");
+            printf("\tpush ax\n");
+            printf(";Paramètres\n");
             break;
         case CALLEND_OP:
-            printf(";callend\n");
-            prepare_stack_params(node->function);
             prepare_stack_locals(node->function);
+            printf(";Appel de la fonction %s\n",node->function->nom_func);
             printf("\tconst ax,%s\n",node->function->nom_func);
             printf("\tcall ax\n");
-            printf(";end callend\n");
             printf(";Dépiler le nombre de variables locales + paramètres\n");
             for (int i = 0; i < node->function->nbr_locals + node->function->nbr_params; i++)
                 printf("\tpop ax\n");
@@ -129,8 +132,9 @@ void choose_op(intermediare *node){
             end_asm();
             break;
         case RET_OP:
-            return_from_func(node->function,node->arg);
+            return_from_func(node->function);
             break;
+        case ARG_OP:
         default:
             break;
     }

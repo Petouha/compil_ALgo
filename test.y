@@ -59,8 +59,8 @@ function : BEG OPEN_ACCO IDF CLOSE_ACCO{
     param_number=0;
     local_number=0;
     };
-end_function : RET OPEN_ACCO IDF CLOSE_ACCO END{
-    add_intermediare(&inter,RET_OP,ARG,$3,current_fct);
+end_function : RET OPEN_ACCO EXPR CLOSE_ACCO END{
+    add_intermediare(&inter,RET_OP,OP,NULL,current_fct);
     };
 parameters : OPEN_ACCO list_parameters CLOSE_ACCO {current_fct->nbr_params=param_number;add_intermediare(&inter,NUL_OP,OP,NULL,current_fct);};
 
@@ -214,14 +214,11 @@ call_params : OPEN_ACCO call_param CLOSE_ACCO{
     }
     ;
 call_param: 
-    NUM {
+    EXPR {
         param_number++;
-        sprintf(tmp,"%d",$1);
-        add_intermediare(&inter,NUM_OP,ARG,tmp,current_fct);}
-    | call_param VIRGULE NUM{
+        }
+    | call_param VIRGULE EXPR{
         param_number++;
-        sprintf(tmp,"%d",$3);
-        add_intermediare(&inter,NUM_OP,ARG,tmp,current_fct);
         };
 %%
 /*
