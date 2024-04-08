@@ -69,7 +69,7 @@ list_parameters:
         fprintf(stderr,"%s\n",$1);
         ajouter(PARAM_VAR,$1,current_fct->nom_func,liste);
         param_number++;
-        add_intermediare(&inter,TEST_OP,OP,NULL,current_fct);;
+        add_intermediare(&inter,TEST_OP,OP,NULL,current_fct);
         }
     | list_parameters VIRGULE IDF{
         fprintf(stderr,"%s\n",$3);
