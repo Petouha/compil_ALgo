@@ -223,5 +223,5 @@ Prépare la 3ème partie de la pile d'execution après un appel de fonction:
 void prepare_stack_func(func_tab *func);
 
 
-void return_from_func(func_tab *func, char* nom);
+void return_from_func(func_tab *func);
 #endif

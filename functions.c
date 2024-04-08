@@ -290,10 +290,9 @@ void print_reg(char *nom){
     printf(";%s register printed\n",nom);
 }
 
-void return_from_func(func_tab *head, char *nom){
+void return_from_func(func_tab *head){
     // Mettre la valeur de retour
     // Marche uniquement si la valeur de retour est une variable
-    get_param_from_stack(nom,head);
     printf("\tcp bx,bp\n");
     printf("\tpop ax\n");
     int n = 4 + head->nbr_locals * 2 + head->nbr_params * 2;
