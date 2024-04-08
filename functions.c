@@ -59,23 +59,6 @@ void prepare_stack_locals(func_tab *func){
 
 }
 
-void prepare_stack_params(func_tab *func){
-    // Valeur de retour
-    printf(";Valeur de retour\n");
-    printf("\tconst ax,0\n");
-    printf("\tpush ax\n");
-    printf(";Paramètres\n");
-    // Paramètres de la fonction mis dans le sens inital :
-    // empiler 1, 2, 3...
-    for (int i = 0; i < func->nbr_params; i++){   
-        printf(";ajout du param : %d\n",i);
-        printf("\tconst ax,%d\n",i*2);
-        printf("\tadd ax,bp\n");
-        printf("\tloadw bx,ax\n");
-        printf("\tpush bx\n");
-    }
-    printf(";Fin des paramètres\n");
-}
 
 void prepare_stack_func(func_tab *func){
     printf("\tpush bp\n");

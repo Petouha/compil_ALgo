@@ -215,13 +215,6 @@ Prépare la 1ère partie de la pile d'execution avant un appel de fonction:
 void prepare_stack_locals(func_tab *func);
 
 /*
-Prépare la 2ème partie de la pile d'execution avant un appel de fonction:
-- Empile les paramètres de la fonction
-- Effectue un call en asipro
-*/
-void prepare_stack_params(func_tab *func);
-
-/*
 Prépare la 3ème partie de la pile d'execution après un appel de fonction:
 - Empile le retour de la fonction (fait automatiquement par asipro)
 - Empile l'ancienne base de la pile
