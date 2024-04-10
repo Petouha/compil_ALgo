@@ -111,14 +111,6 @@ Met sur la pile la constante à utiliser
 UTILISE: ax
 */
 void num(int number);
-
-/*
-Affecte la valeur de var2 à var1.
-Uniquement pour l'affectation IDF = IDF.
-UTILISE: ax,bx,dx
-*/
-void affectation(char *var1, char *var2, func_tab *head);
-
 /*
 Affecte la valeur qui se trouve sur le haut de la pile dans
 la variable nom.
@@ -173,6 +165,10 @@ RETOUR : la cellule si existe, NULL sinon
 */
 func_tab *recherche_func(char *nom, func_tab *head);
 
+
+/*
+Affiche la table des symboles
+*/
 void print_sym_tab(sym_tab *head);
 
 
@@ -187,8 +183,6 @@ void print_sym_tab(sym_tab *head);
 */
 void get_param_from_stack(char *nom, func_tab *head);
 
-
-void set_param_from_stack(char *nom, func_tab *head);
 
 /*
 Recupère la position du paramètre sur la pile en utilisant la table des symboles
@@ -222,6 +216,16 @@ Prépare la 3ème partie de la pile d'execution après un appel de fonction:
 */
 void prepare_stack_func(func_tab *func);
 
-
+/*
+Execute la fin de l'appel de fonction:
+- Mettre la valeur de retour dans son emplacement
+- Mettre sp au même niveau que bp
+- Restaurer la base de la pile
+- Retourner à l'appelant
+*/
 void return_from_func(func_tab *func);
+// Fonction pour libérer la structure sym_tab
+void free_sym(sym_tab *head);
+// Fonction pour libérer la structure func_tab
+void free_func(func_tab *head);
 #endif

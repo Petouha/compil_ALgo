@@ -50,6 +50,7 @@ void free_intermediare(intermediare *head){
         }
         free(tmp);
     }
+    head = NULL;
 }
 
 

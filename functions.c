@@ -42,7 +42,7 @@ void end_asm(){
     printf("\tcallprintfd ax\n");
     printf("\tconst ax,nl\n");
     printf("\tcallprintfs ax\n");
-    //printf("\tpop ax\n");
+    printf("\tpop ax\n");
     printf("\tend\n");
     printf(":pile\n");
     printf("@int 0\n");
@@ -118,24 +118,12 @@ void num(int number){
     printf("\tpush ax\n");
 }
 
-
-// void affectation(char* var1, char* var2,func_tab* head){
-//     printf(";affectation de %s = %s\n",var1,var2);
-//     get_param_from_stack(var2,head);
-//     printf("\tcp ax,bp\n");
-//     printf("\tconst bx,%d\n",get_param_location(var1,head));
-//     printf("\tadd ax,bx\n");
-//     printf("\tstorew dx,ax\n");
-// }
-
 void affect_from_top_stack(char *nom,func_tab* head){
     printf("\tpop dx\n");
-    //print_param(nom,head);
     printf("\tcp bx,bp\n");
     printf("\tconst ax,%d\n",get_param_location(nom,head));
     printf("\tsub bx,ax\n");
     printf("\tstorew dx,bx\n");
-    //print_param(nom,head);
 }
 
 void increment(char* nom,func_tab* head){
@@ -253,12 +241,6 @@ void get_param_from_stack(char *nom,func_tab *head){
     printf(";end get_param\n");
 }
 
-void set_param_from_stack(char *nom, func_tab* head){
-    printf(";set_param_from_stack : %s\n",nom);
-    printf("\tloadw bx,sp\n");
-    printf("\tconst ax,%d\n",get_param_location(nom,head));
-}
-
 int get_param_location(char *nom,func_tab *head){
     sym_tab *node = recherche(nom,head->table);
     if(node == NULL){
@@ -292,7 +274,6 @@ void print_reg(char *nom){
 
 void return_from_func(func_tab *head){
     // Mettre la valeur de retour
-    // Marche uniquement si la valeur de retour est une variable
     printf("\tcp bx,bp\n");
     printf("\tpop ax\n");
     int n = 4 + head->nbr_locals * 2 + head->nbr_params * 2;
@@ -304,4 +285,22 @@ void return_from_func(func_tab *head){
     printf("\tcp sp,bp\n");
     printf("\tpop bp\n");
     printf("\tret\n");
+}
+
+
+void free_sym(sym_tab *sym) {
+    if (sym == NULL)
+        return;
+    free(sym->nom_idf);
+    free(sym);
+}
+
+
+void free_func(func_tab *func) {
+    if (func == NULL)
+        return;
+    free(func->nom_func);
+    free_sym(func->table); // libérer la table de symboles
+    free_func(func->ptr); // libérer le prochain élément dans la liste
+    free(func);
 }

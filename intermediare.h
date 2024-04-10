@@ -55,13 +55,30 @@ ajoute en fin de liste un élément de la liste chainée
 argumetns:
     - head: pointeur vers le pointeur de la tête de la liste
     - op: l'opération à ajouter
-    - arg1: l'argument de l'opération
+    - type: le type de l'argument (OP ou ARG)
+    - arg: l'argument de l'opération (vide si type == OP)
+    - func: la fonction actuelle
 
 */
-void generate_intermediare(intermediare* head);
 void add_intermediare(intermediare **head, operation op,arg_type type, char *arg,func_tab* func);
+
+/*
+Parcours la liste et génère du code assembleur
+*/
+void generate_intermediare(intermediare* head);
+
+/*
+Affiche le code intermédiaire
+*/
 void print_intermediare(intermediare *head);
+
+/*
+Choisit l'opération à effectuer pendant le parcours
+*/
 void choose_op(intermediare *node);
+/*
+Libère la mémoire allouée pour la liste chainée
+*/
 void free_intermediare(intermediare *head);
 
 
