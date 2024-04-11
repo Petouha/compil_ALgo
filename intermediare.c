@@ -5,7 +5,7 @@
 
 void add_intermediare(intermediare **head, operation op, arg_type type, char *arg, func_tab* func){
     intermediare *new = (intermediare *)malloc(sizeof(intermediare));
-    fprintf(stderr,"je vais ajouter %d\n",op);
+    //fprintf(stderr,"je vais ajouter %d\n",op);
     if(new == NULL){
         perror("malloc");
         exit(EXIT_FAILURE);
@@ -121,7 +121,26 @@ void choose_op(intermediare *node){
             printf("\tpush ax\n");
             printf(";Paramètres\n");
             break;
-        case CALLEND_OP:
+        case CALL_EXP_OP:
+            printf(";préparation de l'appel de %s\n",node->function->nom_func);
+            printf(";Valeur de retour\n");
+            printf("\tconst ax,0\n");
+            printf("\tpush ax\n");
+            printf(";Paramètres\n"); 
+            break;
+
+        case CALL_EXP_PARAM_END_OP:
+            printf(";Fin des paramètres\n");
+            prepare_stack_locals(node->function);
+            printf(";Appel de la fonction %s\n",node->function->nom_func);
+            printf("\tconst ax,%s\n",node->function->nom_func);
+            printf("\tcall ax\n");
+            printf(";Dépiler le nombre de variables locales + paramètres\n");
+            for (int i = 0; i < node->function->nbr_locals + node->function->nbr_params; i++)
+                printf("\tpop ax\n");
+            printf(";Fin de la dépilement\n");
+            break;
+        case CALL_PARAM_END_OP:
             prepare_stack_locals(node->function);
             printf(";Appel de la fonction %s\n",node->function->nom_func);
             printf("\tconst ax,%s\n",node->function->nom_func);

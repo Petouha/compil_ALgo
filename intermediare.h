@@ -25,10 +25,12 @@ typedef enum operation{
     NUL_OP, //12
     FUNC_OP, //13
     CALL_OP, //14
-    CALLEND_OP, //15
+    CALL_PARAM_END_OP, //15
     RET_OP, //16
     TEST_OP, //17
     ARG_OP, //18
+    CALL_EXP_OP, //19
+    CALL_EXP_PARAM_END_OP, //20
 } operation;
 
 // enum pour différencier entre les deux types d'arguments
