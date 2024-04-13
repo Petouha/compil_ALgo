@@ -178,11 +178,13 @@ void num(int number){
 }
 
 void affect_from_top_stack(char *nom,func_tab* head){
+    printf(";Affectation de %s\n",nom);
     printf("\tpop dx\n");
     printf("\tcp bx,bp\n");
     printf("\tconst ax,%d\n",get_param_location(nom,head));
     printf("\tsub bx,ax\n");
     printf("\tstorew dx,bx\n");
+    printf(";Fin de l'affectation de %s\n",nom);
 }
 
 void increment(char* nom,func_tab* head){
@@ -207,7 +209,10 @@ void decrement(char* nom,func_tab* head){
     printf(";end decrement\n");
 }
 
-
+void if_statement(){
+    
+    
+}
 
 
 sym_tab* nouvelle_cellule() {
@@ -297,7 +302,7 @@ void get_param_from_stack(char *nom,func_tab *head){
     printf("\tsub bx,ax\n");
     printf("\tloadw dx,bx\n");
     printf("\tpush dx\n");
-    printf(";end get_param\n");
+    printf(";Fin de la récupération de:%s\n",nom);
 }
 
 int get_param_location(char *nom,func_tab *head){
@@ -333,6 +338,7 @@ void print_reg(char *nom){
 
 void return_from_func(func_tab *head){
     // Mettre la valeur de retour
+    printf(";Mettre la valeur de retour\n");
     printf("\tcp bx,bp\n");
     printf("\tpop ax\n");
     int n = 4 + head->nbr_locals * 2 + head->nbr_params * 2;
@@ -341,6 +347,7 @@ void return_from_func(func_tab *head){
     printf("\tstorew ax,bx\n");
 
     // Restaurer la base de la pile
+    printf(";Restaurer la base de la pile et mettre sp à bp\n");
     printf("\tcp sp,bp\n");
     printf("\tpop bp\n");
     printf("\tret\n");
@@ -362,4 +369,16 @@ void free_func(func_tab *func) {
     free_sym(func->table); // libérer la table de symboles
     free_func(func->ptr); // libérer le prochain élément dans la liste
     free(func);
+}
+char* create_label(char* label_name, int number){
+    char* buffer = (char*)malloc(128 * sizeof(char));
+    if(buffer == NULL){
+        perror("malloc");
+        exit(EXIT_FAILURE);
+    }
+    if(snprintf(buffer,128,"%s:%d",label_name,number) == -1){
+        perror("snprintf");
+        exit(EXIT_FAILURE);
+    }
+    return buffer;
 }
