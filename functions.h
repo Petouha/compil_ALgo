@@ -156,7 +156,7 @@ UTILISE: ax,bx,dx
 void decrement(char *nom, func_tab *head);
 
 
-void if_statement();
+
 
 /*
 RETOUR : la nouvelle cellule de sym_tab crée par malloc (la gestion d'erreur se fait dans ajouter)
