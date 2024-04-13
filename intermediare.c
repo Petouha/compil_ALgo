@@ -1,7 +1,57 @@
 #include "intermediare.h"
 #include "functions.h"
-
 //corps des fonctions
+
+void add_if(if_tab **head, int id){
+    if_tab *new = (if_tab *)malloc(sizeof(if_tab));
+    if(new == NULL){
+        perror("malloc");
+        exit(EXIT_FAILURE);
+    }
+    new->if_id = id;
+    new->next = NULL;
+    
+    if(*head == NULL){
+        *head = new;
+    }else{
+        if_tab *current = *head;
+        while(current->next != NULL){
+            current = current->next;
+        }
+        current->next = new;
+    }
+}
+
+int pop_if(if_tab **head){
+    if_tab *current = *head;
+    if(current == NULL){
+        return -1;
+    }
+    if_tab *prev = NULL;
+    while(current->next != NULL){
+        prev = current;
+        current = current->next;
+    }
+    int id = current->if_id;
+    if(prev != NULL){
+        prev->next = NULL;
+    }else{
+        *head = NULL;
+    }
+    free(current);
+    return id;
+}
+
+void free_if(if_tab **head){
+    if_tab *current = *head;
+    if_tab *tmp = current;
+    while(tmp != NULL){
+        tmp = current->next;
+        free(tmp);
+        current = tmp;
+    }
+    *head = NULL;
+}
 
 void add_intermediare(intermediare **head, operation op, arg_type type, char *arg, func_tab* func){
     intermediare *new = (intermediare *)malloc(sizeof(intermediare));
@@ -87,10 +137,10 @@ void choose_op(intermediare *node){
             multiplication();
             break;
         case OR_OP:
-            fprintf(stderr,"OR_OP\n");
+            or();
             break;
         case NOT_OP:
-            fprintf(stderr,"NOT_OP\n");
+            not();
             break;
         case SET_OP:
             affect_from_top_stack(node->arg,node->function);
@@ -155,7 +205,25 @@ void choose_op(intermediare *node){
             return_from_func(node->function);
             break;
         case ARG_OP:
-        default:
             break;
+        case EGAL_OP:
+            egal();
+            break;
+        case IF_OP:
+            printf(";If statement\n");
+            char *if_jump=create_label("if_jump",atoi(node->arg));
+
+            printf("\tpop ax\n");
+            printf("\tconst bx,0\n");
+            printf("\tconst cx,%s\n",if_jump);
+            printf("\tcmp ax,bx\n");
+            printf("\tjmpz cx\n");
+
+            break;
+        case FI_OP:
+            printf(":%s\n",create_label("if_jump",atoi(node->arg)));
+            break;
+        default:
+        break;
     }
 }

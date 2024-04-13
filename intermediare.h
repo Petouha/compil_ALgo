@@ -31,6 +31,9 @@ typedef enum operation{
     ARG_OP, //18
     CALL_EXP_OP, //19
     CALL_EXP_PARAM_END_OP, //20
+    EGAL_OP, //21
+    IF_OP, //22
+    FI_OP, //23	
 } operation;
 
 // enum pour différencier entre les deux types d'arguments
@@ -51,7 +54,14 @@ typedef struct intermediare{
     struct intermediare *next;
 } intermediare;
 
-// prototypes des fonctions
+
+// structure pour gérer les appels de if
+typedef struct if_tab{
+    int if_id;
+    struct if_tab *next;
+} if_tab;
+
+// ------prototypes des fonctions--------
 /*
 ajoute en fin de liste un élément de la liste chainée
 argumetns:
@@ -62,6 +72,13 @@ argumetns:
     - func: la fonction actuelle
 
 */
+// fonction qui ajoute un élément à la liste des if en fin de queue
+void add_if(if_tab **head, int id);
+// fonction qui supprime un élément de la liste des if en fin de queue
+int pop_if(if_tab **head);
+// fonction qui libère la mémoire allouée pour la liste des if
+void free_if(if_tab **head);
+
 void add_intermediare(intermediare **head, operation op,arg_type type, char *arg,func_tab* func);
 
 /*
