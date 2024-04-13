@@ -5,13 +5,15 @@
 #include "functions.h"
 #include "intermediare.h"
 
-cond_tab *if_table;
 func_tab *liste;
 func_tab *current_fct, *current_call;
 intermediare *inter;
-int param_number,local_number,if_label;
+int param_number,local_number;
+int if_label = 0;
+cond_tab *if_table;
 
-char tmp[256];
+
+char tmp[256], tmp2[256];
 
 int yylex();  
 void yyerror(const char* s){
@@ -135,15 +137,28 @@ instr: SET OPEN_ACCO IDF CLOSE_ACCO OPEN_ACCO EXPR CLOSE_ACCO
         add_cond(&if_table,if_label);
         if_label++;
         add_intermediare(&inter,IF_OP,ARG,tmp,current_fct);
-    } CLOSE_ACCO code FI {
+    } CLOSE_ACCO code ELSE_F;
+
+
+ELSE_F : ELSE {
+    // récupérer le label pour le if qui saute juste avant le else
+    snprintf(tmp2,256,"%d",pop_cond(&if_table));
+    // ajouter le label de la fin du code du if
+    snprintf(tmp,256,"%d",if_label);
+    add_cond(&if_table,if_label);
+    if_label++;
+    add_intermediare(&inter,ELSE_OP,ARG,tmp,current_fct);
+
+    add_intermediare(&inter,ELSE_2_OP,ARG,tmp2,current_fct);
+    }   code FI {
         snprintf(tmp,256,"%d",pop_cond(&if_table));
         add_intermediare(&inter,FI_OP,ARG,tmp,current_fct);
     }
+    |FI {
+        snprintf(tmp,256,"%d",pop_cond(&if_table));
+        add_intermediare(&inter,FI_OP,ARG,tmp,current_fct);
     
-
-
-
-
+    };
 EXPR:
  EXPR ADD EXPR{
     if(test_expr_int($1,$3) == ERR_T){
