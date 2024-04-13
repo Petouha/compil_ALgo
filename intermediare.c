@@ -2,19 +2,19 @@
 #include "functions.h"
 //corps des fonctions
 
-void add_if(if_tab **head, int id){
-    if_tab *new = (if_tab *)malloc(sizeof(if_tab));
+void add_cond(cond_tab **head, int id){
+    cond_tab *new = (cond_tab *)malloc(sizeof(cond_tab));
     if(new == NULL){
         perror("malloc");
         exit(EXIT_FAILURE);
     }
-    new->if_id = id;
+    new->cond_id = id;
     new->next = NULL;
     
     if(*head == NULL){
         *head = new;
     }else{
-        if_tab *current = *head;
+        cond_tab *current = *head;
         while(current->next != NULL){
             current = current->next;
         }
@@ -22,17 +22,17 @@ void add_if(if_tab **head, int id){
     }
 }
 
-int pop_if(if_tab **head){
-    if_tab *current = *head;
+int pop_cond(cond_tab **head){
+    cond_tab *current = *head;
     if(current == NULL){
         return -1;
     }
-    if_tab *prev = NULL;
+    cond_tab *prev = NULL;
     while(current->next != NULL){
         prev = current;
         current = current->next;
     }
-    int id = current->if_id;
+    int id = current->cond_id;
     if(prev != NULL){
         prev->next = NULL;
     }else{
@@ -42,9 +42,9 @@ int pop_if(if_tab **head){
     return id;
 }
 
-void free_if(if_tab **head){
-    if_tab *current = *head;
-    if_tab *tmp = current;
+void free_cond(cond_tab **head){
+    cond_tab *current = *head;
+    cond_tab *tmp = current;
     while(tmp != NULL){
         tmp = current->next;
         free(tmp);

@@ -56,10 +56,10 @@ typedef struct intermediare{
 
 
 // structure pour gérer les appels de if
-typedef struct if_tab{
-    int if_id;
-    struct if_tab *next;
-} if_tab;
+typedef struct cond_tab{
+    int cond_id;
+    struct cond_tab *next;
+} cond_tab;
 
 // ------prototypes des fonctions--------
 /*
@@ -72,12 +72,12 @@ argumetns:
     - func: la fonction actuelle
 
 */
-// fonction qui ajoute un élément à la liste des if en fin de queue
-void add_if(if_tab **head, int id);
-// fonction qui supprime un élément de la liste des if en fin de queue
-int pop_if(if_tab **head);
-// fonction qui libère la mémoire allouée pour la liste des if
-void free_if(if_tab **head);
+// fonction qui ajoute un élément à la liste des cond en fin de queue
+void add_cond(cond_tab **head, int id);
+// fonction qui supprime un élément de la liste des cond en fin de queue
+int pop_cond(cond_tab **head);
+// fonction qui libère la mémoire allouée pour la liste des cond
+void free_cond(cond_tab **head);
 
 void add_intermediare(intermediare **head, operation op,arg_type type, char *arg,func_tab* func);
 
