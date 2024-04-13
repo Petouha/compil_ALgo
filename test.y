@@ -213,8 +213,14 @@ EXPR:
         sprintf(tmp,"%d",$1);
         add_intermediare(&inter,NUM_OP,ARG,tmp,current_fct);
         };
-    | FALSE {$$=BOOL_T;num(0);}
-    | TRUE {$$=BOOL_T;num(1);}
+    | FALSE {
+        $$=BOOL_T;
+        add_intermediare(&inter,NUM_OP,ARG,"0",current_fct);
+        }
+    | TRUE {
+        $$=BOOL_T;
+        add_intermediare(&inter,NUM_OP,ARG,"1",current_fct);
+        }
     | IDF {
         $$=NUM_T;
         if(recherche($1,current_fct->table) == NULL){
@@ -223,9 +229,6 @@ EXPR:
         }
         
         add_intermediare(&inter,IDF_OP,ARG,$1,current_fct);
-
-        //get_param_from_stack($1,current_fct->table);
-        //printf("\tpush dx\n");
         }
     | call_expr
      {
