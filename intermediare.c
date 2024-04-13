@@ -1,5 +1,7 @@
 #include "intermediare.h"
 #include "functions.h"
+
+
 //corps des fonctions
 
 void add_cond(cond_tab **head, int id){
@@ -222,6 +224,17 @@ void choose_op(intermediare *node){
             break;
         case FI_OP:
             printf(":%s\n",create_label("if_jump",atoi(node->arg)));
+            break;
+
+        case ELSE_OP:
+            printf(";If jumping after Else\n");
+            printf("\tconst ax,%s\n",create_label("if_jump",atoi(node->arg)));
+            printf("\tjmp ax\n");
+            break;
+        case ELSE_2_OP:
+            printf(";Else statement\n");
+            char *else_jump=create_label("if_jump",atoi(node->arg));
+            printf(":%s\n",else_jump);
             break;
         default:
         break;

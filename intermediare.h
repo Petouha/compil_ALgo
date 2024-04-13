@@ -33,7 +33,9 @@ typedef enum operation{
     CALL_EXP_PARAM_END_OP, //20
     EGAL_OP, //21
     IF_OP, //22
-    FI_OP, //23	
+    FI_OP, //23
+    ELSE_OP, //24
+    ELSE_2_OP, //25
 } operation;
 
 // enum pour différencier entre les deux types d'arguments
