@@ -5,11 +5,12 @@
 #include "functions.h"
 #include "intermediare.h"
 
+if_tab *if_table;
 func_tab *liste;
 func_tab *current_fct, *current_call;
 intermediare *inter;
-int param_number,local_number;
-int label_number = 0;
+int param_number,local_number,if_label;
+
 char tmp[256];
 
 int yylex();  
@@ -32,7 +33,7 @@ void yyerror(const char* s){
 %token<entier> NUM
 %token<idf> IDF
 
-%token BEG END SET INCR DECR CALL RET;
+%token BEG END SET INCR DECR CALL RET IF FI;
 %token OPEN_ACCO CLOSE_ACCO VIRGULE OPEN_PARENT CLOSE_PARENT;
 %token ADD SUB MULT DIV;
 %token DIF AND EGAL OR NOT TRUE FALSE;
@@ -129,6 +130,18 @@ instr: SET OPEN_ACCO IDF CLOSE_ACCO OPEN_ACCO EXPR CLOSE_ACCO
         //decrement($3,current_fct->table);
         add_intermediare(&inter,DECR_OP,ARG,$3,current_fct);
     };
+    | IF OPEN_ACCO COND {
+        snprintf(tmp,256,"%d",if_label);
+        add_if(&if_table,if_label);
+        if_label++;
+        add_intermediare(&inter,IF_OP,ARG,tmp,current_fct);
+    } CLOSE_ACCO code FI {
+        snprintf(tmp,256,"%d",pop_if(&if_table));
+        add_intermediare(&inter,FI_OP,ARG,tmp,current_fct);
+    }
+    
+
+
 
 
 EXPR:
