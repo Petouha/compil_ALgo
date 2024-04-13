@@ -5,7 +5,7 @@
 #include "functions.h"
 #include "intermediare.h"
 
-if_tab *if_table;
+cond_tab *if_table;
 func_tab *liste;
 func_tab *current_fct, *current_call;
 intermediare *inter;
@@ -33,7 +33,7 @@ void yyerror(const char* s){
 %token<entier> NUM
 %token<idf> IDF
 
-%token BEG END SET INCR DECR CALL RET IF FI;
+%token BEG END SET INCR DECR CALL RET IF FI ELSE;
 %token OPEN_ACCO CLOSE_ACCO VIRGULE OPEN_PARENT CLOSE_PARENT;
 %token ADD SUB MULT DIV;
 %token DIF AND EGAL OR NOT TRUE FALSE;
@@ -132,11 +132,11 @@ instr: SET OPEN_ACCO IDF CLOSE_ACCO OPEN_ACCO EXPR CLOSE_ACCO
     };
     | IF OPEN_ACCO COND {
         snprintf(tmp,256,"%d",if_label);
-        add_if(&if_table,if_label);
+        add_cond(&if_table,if_label);
         if_label++;
         add_intermediare(&inter,IF_OP,ARG,tmp,current_fct);
     } CLOSE_ACCO code FI {
-        snprintf(tmp,256,"%d",pop_if(&if_table));
+        snprintf(tmp,256,"%d",pop_cond(&if_table));
         add_intermediare(&inter,FI_OP,ARG,tmp,current_fct);
     }
     
@@ -183,8 +183,6 @@ EXPR:
             exit(EXIT_FAILURE);
         } else {
             $$=NUM_T;
-            //division();
-
             add_intermediare(&inter,DIV_OP,OP,NULL,current_fct);
         }
     }
@@ -193,8 +191,6 @@ EXPR:
             $$=ERR_T;
         } else {
             $$=BOOL_T;
-            //multiplication();
-
             add_intermediare(&inter,AND_OP,OP,NULL,current_fct);
         }
     }
