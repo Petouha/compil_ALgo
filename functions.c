@@ -1,5 +1,7 @@
 #include"functions.h"
 
+int label = 0;
+
 void err_div(){
     printf(":msgErrDiv0\n");
     printf("@string \"Erreur division par 0\\n\"\n");
@@ -112,6 +114,63 @@ void division(){
     printf("\tpush ax\n");
 }
 
+void or(){
+    printf(";Debut or\n");
+    char *jump = create_label("jump_or",label);
+    char *end = create_label("end_or",label);
+    printf("\tpop ax\n");
+    printf("\tpop bx\n");
+    printf("\tadd ax,bx\n");
+    printf("\tconst cx,%s\n",jump);
+    printf("\tconst bx,0\n");
+    printf("\tcmp ax,bx\n");
+    printf("\tjmpc cx\n");
+    printf("\tconst ax,1\n");
+    printf("\tpush ax\n");
+    printf("\tconst ax,%s\n",end);
+    printf("\tjmp ax\n");
+    printf(":%s\n",jump);    
+    printf("\tpush ax\n");
+    printf(":%s\n",end);
+    label++;
+    free(jump);
+    free(end);
+    printf(";Debut or\n");
+}
+
+void not(){
+    printf(";Debut not\n");
+
+    printf("\tpop bx\n");
+    printf("\tconst ax,1\n");
+    printf("\tsub ax,bx\n");
+    printf("\tpush ax\n");
+
+    printf(";Fin not\n");
+}
+
+void egal(){
+    printf(";Debut égalité\n");
+    char *jump = create_label("jump_egal",label);
+    char *end = create_label("end_egal",label);
+    printf("\tpop ax\n");
+    printf("\tpop bx\n");
+    printf("\tconst cx,%s\n",jump);
+    printf("\tcmp ax,bx\n");
+    printf("\tjmpc cx\n");
+    printf("\tconst ax,0\n");
+    printf("\tpush ax\n");
+    printf("\tconst cx,%s\n",end);
+    printf("\tjmp cx\n");
+    printf(":%s\n",jump);
+    printf("\tconst ax,1\n");   
+    printf("\tpush ax\n");
+    printf(":%s\n",end);
+    printf(";Fin égalité\n");
+    label++;
+    free(jump);
+    free(end);
+}
 
 void num(int number){
     printf("\tconst ax,%d\n",number);

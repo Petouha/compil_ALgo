@@ -18,7 +18,7 @@ typedef enum
     ERR_T
 } TYPE_SYNTH;
 
-extern int param_number, local_number;
+extern int param_number, local_number,label;
 
 typedef struct func_sym
 {
@@ -79,38 +79,63 @@ RETOUR: BOOL_T si oui, ERR_T sinon.
 int test_expr_bool(int first, int second);
 
 /*
-Fait l'addition des 2 premières valeures sur la pile.
+Fait l'addition des 2 premières valeurs sur la pile.
 UTILISE : ax,bx,cx
 RESULTAT: en haut de la pile
 */
 void addition();
 
 /*
-Fait la soustraction des 2 premières valeures sur la pile.
+Fait la soustraction des 2 premières valeurs sur la pile.
 UTILISE : ax,bx
 RESULTAT: en haut de la pile
 */
 void soustraction();
 
 /*
-Fait la multiplication des 2 premières valeures sur la pile.
+Fait la multiplication des 2 premières valeurs sur la pile.
 UTILISE : ax,bx,cx
 RESULTAT: en haut de la pile
 */
 void multiplication();
 
 /*
-Fait la division des 2 premières valeures sur la pile.
+Fait la division des 2 premières valeurs sur la pile.
 UTILISE : ax,bx,cx
 RESULTAT: en haut de la pile
 */
 void division();
 
 /*
+Fait le or logique des 2 premières valeurs sur la pile.
+UTILISE : ax,bx,cx
+RESULTAT: en haut de la pile
+Incrémente label.
+*/
+void or();
+
+
+/*
+Fait le not logique de la 1ère valeur sur la pile.
+UTILISE : ax,bx
+RESULTAT: en haut de la pile
+*/
+void not();
+
+/*
+Fait l'égalité entre les deux premières valeurs sur la pile.
+UTILISE : ax,bx,cx
+RESULTAT: en haut de la pile
+Incrémente label.
+*/
+void egal();
+
+/*
 Met sur la pile la constante à utiliser
 UTILISE: ax
 */
 void num(int number);
+
 /*
 Affecte la valeur qui se trouve sur le haut de la pile dans
 la variable nom.
@@ -131,7 +156,7 @@ UTILISE: ax,bx,dx
 void decrement(char *nom, func_tab *head);
 
 
-
+void if_statement();
 
 /*
 RETOUR : la nouvelle cellule de sym_tab crée par malloc (la gestion d'erreur se fait dans ajouter)
@@ -228,4 +253,6 @@ void return_from_func(func_tab *func);
 void free_sym(sym_tab *head);
 // Fonction pour libérer la structure func_tab
 void free_func(func_tab *head);
+// création du label des conditions
+char* create_label(char* label_name, int number);
 #endif
