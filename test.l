@@ -17,7 +17,8 @@
 "\\CALL"        {return CALL;}
 "\\RETURN"      {return RET;}
 "\\IF"          {return IF;}
-"\\FI"       {return FI;}
+"\\FI"          {return FI;}
+"\\ELSE"        {return ELSE;}
 
 "," {return VIRGULE;}
 
