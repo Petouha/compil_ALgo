@@ -14,7 +14,7 @@ char tmp[256];
 
 int yylex();  
 void yyerror(const char* s){
-    fprintf(stderr,"yyerror :%s at %d\n",s,yylineno);
+    fprintf(stderr,"yyerror :%s\n",s);
 }
 
 %}
@@ -185,6 +185,14 @@ EXPR:
             add_intermediare(&inter,AND_OP,OP,NULL,current_fct);
         }
     }
+    | EXPR OR EXPR{
+        if(test_expr_bool($1,$3) == ERR_T){
+            $$=ERR_T;
+        } else {
+            $$=BOOL_T;
+            add_intermediare(&inter,OR_OP,OP,NULL,current_fct);
+        }
+    }
     | OPEN_PARENT EXPR CLOSE_PARENT{$$=$2;}
     | NUM {
         $$=NUM_T;
@@ -210,7 +218,13 @@ EXPR:
      {
         $$=NUM_T;
         };
-
+COND : EXPR EGAL EXPR {
+    if($1 != $3){
+        fprintf(stderr,"Type non compatible\n");
+        exit(EXIT_FAILURE);
+    }
+    add_intermediare(&inter,EGAL_OP,OP,NULL,current_fct);
+}
 call_expr : call_e call_expr_params {};    
 
 call_e : CALL OPEN_ACCO IDF CLOSE_ACCO
