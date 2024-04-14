@@ -9,8 +9,8 @@ func_tab *liste;
 func_tab *current_fct, *current_call;
 intermediare *inter;
 int param_number,local_number;
-int if_label,while_label;
-cond_tab *if_table, *while_table;
+int if_label,while_label,do_label;
+cond_tab *if_table, *while_table, *do_table;
 
 
 char tmp[256], tmp2[256];
@@ -35,7 +35,7 @@ void yyerror(const char* s){
 %token<entier> NUM
 %token<idf> IDF
 
-%token BEG END SET INCR DECR CALL RET IF FI ELSE DOWHILE OD;
+%token BEG END SET INCR DECR CALL RET IF FI ELSE DOWHILE OD DOFORI;
 %token OPEN_ACCO CLOSE_ACCO VIRGULE OPEN_PARENT CLOSE_PARENT;
 %token ADD SUB MULT DIV;
 %token DIF AND EGAL OR NOT TRUE FALSE INF INFEQ SUP SUPEQ;
@@ -165,6 +165,39 @@ instr: SET OPEN_ACCO IDF CLOSE_ACCO OPEN_ACCO EXPR CLOSE_ACCO
     | RET OPEN_ACCO EXPR CLOSE_ACCO {
         add_intermediare(&inter,RET_OP,OP,NULL,current_fct);
     }
+    | DOFORI OPEN_ACCO IDF CLOSE_ACCO OPEN_ACCO EXPR CLOSE_ACCO {
+        if(recherche($3,current_fct->table) ==  NULL){
+            ajouter(LOCAL_VAR,$3,current_fct->nom_func
+            ,current_fct);
+            local_number++;
+            current_fct->nbr_locals++;
+        }
+        // Pour faire le set de la variable de début
+        add_intermediare(&inter,DOFORI_1_OP,ARG,$3,current_fct);
+
+        // Création du label pour revenir au for
+        snprintf(tmp,256,"%d",do_label);
+        add_cond(&do_table,do_label);
+        do_label++;
+        add_intermediare(&inter,DOFORI_2_OP,ARG,tmp,current_fct);
+
+    } 
+    OPEN_ACCO EXPR CLOSE_ACCO {
+        // Création du jump pour sortir du for
+        snprintf(tmp,256,"%d",do_label);
+        add_cond(&do_table,do_label);
+        do_label++;
+        add_intermediare(&inter,DOFORI_3_OP,ARG,tmp,current_fct);
+    } code OD {
+        // récupérer le label de sortie du for
+        snprintf(tmp2,256,"%d",pop_cond(&do_table));
+        // récupérer le label pour revenir au for
+        snprintf(tmp,256,"%d",pop_cond(&do_table));
+        
+        add_intermediare(&inter,OD_FORI_1_OP,ARG,tmp,current_fct);
+        add_intermediare(&inter,OD_FORI_2_OP,ARG,tmp2,current_fct);
+    }
+         
 
 
 ELSE_F : ELSE {
