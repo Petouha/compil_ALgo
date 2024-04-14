@@ -335,6 +335,7 @@ void increment(char* nom,func_tab* head){
     printf(";increment : %s\n",nom);
     get_param_from_stack(nom,head);
     //print_reg("bx");
+    printf("\tpop dx\n");
     printf("\tconst ax,1\n");
     printf("\tadd dx,ax\n");
     printf("\tstorew dx,bx\n");
@@ -346,6 +347,7 @@ void decrement(char* nom,func_tab* head){
     printf(";decrement : %s\n",nom);
     get_param_from_stack(nom,head);
     //print_reg("bx");
+    printf("\tpop dx\n");
     printf("\tconst ax,1\n");
     printf("\tsub dx,ax\n");
     printf("\tstorew dx,bx\n");
