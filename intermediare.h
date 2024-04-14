@@ -10,13 +10,21 @@
 // enumération des types des opérations
 
 typedef enum operation{
+    // opérations arithmétiques
     ADD_OP, //0
     SUB_OP, //1
     MUL_OP, //2
     DIV_OP, //3
+    // opérations logiques
     AND_OP, //4
     OR_OP, //5
     NOT_OP, //6
+    EGAL_OP, //21
+    DIF_OP, //22
+    INF_OP, //23
+    SUP_OP, //24
+    INFEQ_OP, //25
+    SUPEQ_OP, //26
     SET_OP, //7
     INCR_OP, //8
     DECR_OP, //9
@@ -31,8 +39,6 @@ typedef enum operation{
     ARG_OP, //18
     CALL_EXP_OP, //19
     CALL_EXP_PARAM_END_OP, //20
-    EGAL_OP, //21
-    DIF_OP, //22
     IF_OP, //22
     FI_OP, //23
     ELSE_OP, //24

@@ -144,6 +144,24 @@ void choose_op(intermediare *node){
         case NOT_OP:
             not();
             break;
+        case EGAL_OP:
+            egal();
+            break;
+        case DIF_OP:
+            diff();
+            break;
+        case INF_OP:
+            inf();
+            break;
+        case SUP_OP:
+            sup();
+            break;
+        case INFEQ_OP:
+            infeq();
+            break;
+        case SUPEQ_OP:
+            supeq();
+            break;
         case SET_OP:
             affect_from_top_stack(node->arg,node->function);
             break;
@@ -207,12 +225,6 @@ void choose_op(intermediare *node){
             return_from_func(node->function);
             break;
         case ARG_OP:
-            break;
-        case EGAL_OP:
-            egal();
-            break;
-        case DIF_OP:
-            diff();
             break;
         case IF_OP:
             printf(";If statement\n");
