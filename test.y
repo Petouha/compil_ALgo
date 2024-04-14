@@ -52,7 +52,7 @@ void yyerror(const char* s){
 %%
 
 S : |
-   function parameters code end_function S call_final;
+   function parameters code END S call_final;
 
 function : BEG OPEN_ACCO IDF CLOSE_ACCO
 {
@@ -67,11 +67,11 @@ function : BEG OPEN_ACCO IDF CLOSE_ACCO
     local_number=0;
     };
 
-end_function : RET OPEN_ACCO EXPR CLOSE_ACCO END
+/* end_function : RET OPEN_ACCO EXPR CLOSE_ACCO END
 {
     add_intermediare(&inter,RET_OP,OP,NULL,current_fct);
     //fprintf(stderr,"Fin de la fonction %s\n",current_fct->nom_func);
-    };
+}; */
     
 parameters : OPEN_ACCO list_parameters CLOSE_ACCO 
 {
@@ -161,6 +161,10 @@ instr: SET OPEN_ACCO IDF CLOSE_ACCO OPEN_ACCO EXPR CLOSE_ACCO
         //pour ajouter le label de la fin
         add_intermediare(&inter,OD_2_OP,ARG,tmp2,current_fct);
     };
+
+    | RET OPEN_ACCO EXPR CLOSE_ACCO {
+        add_intermediare(&inter,RET_OP,OP,NULL,current_fct);
+    }
 
 
 ELSE_F : ELSE {
