@@ -196,6 +196,126 @@ void diff(){
 
 }
 
+void inf(){
+    printf(";Debut inf\n");
+    char *jump = create_label("jump_inf",label);
+    char *end = create_label("end_inf",label);
+    //pop les deux valeurs
+    printf("\tpop bx\n");
+    printf("\tpop ax\n");
+
+    printf("\tconst cx,%s\n", jump);
+    printf("\tsless ax,bx\n");
+    printf("\tjmpc cx\n");
+
+    printf("\tconst ax,0\n");
+    printf("\tpush ax\n");
+    printf("\tconst dx,%s\n", end);
+    printf("\tjmp dx\n");
+
+    printf(":%s\n", jump);
+    printf("\tconst ax,1\n");
+    printf("\tpush ax\n");
+
+    printf(":%s\n", end);
+
+    printf(";Fin inf\n");
+    label++;
+    free(jump);
+    free(end);
+}
+
+void sup(){
+    printf(";Debut sup\n");
+    char *jump = create_label("jump_sup",label);
+    char *end = create_label("end_sup",label);
+    //pop les deux valeurs
+    printf("\tpop bx\n");
+    printf("\tpop ax\n");
+
+    printf("\tconst cx,%s\n", jump);
+    printf("\tsless bx,ax\n");
+    printf("\tjmpc cx\n");
+
+    printf("\tconst ax,0\n");
+    printf("\tpush ax\n");
+    printf("\tconst dx,%s\n", end);
+    printf("\tjmp dx\n");
+
+    printf(":%s\n", jump);
+    printf("\tconst ax,1\n");
+    printf("\tpush ax\n");
+
+    printf(":%s\n", end);
+
+    printf(";Fin sup\n");
+    label++;
+    free(jump);
+    free(end);
+}
+
+void infeq(){
+    printf(";Debut infeq\n");
+    char *jump = create_label("jump_infeq",label);
+    char *end = create_label("end_infeq",label);
+    //pop les deux valeurs
+    printf("\tpop bx\n");
+    printf("\tpop ax\n");
+
+    printf("\tconst cx,%s\n", jump);
+    printf("\tcmp ax,bx\n");
+    printf("\tjmpc cx\n");
+    printf("\tsless ax,bx\n");
+    printf("\tjmpc cx\n");
+
+    printf("\tconst ax,0\n");
+    printf("\tpush ax\n");
+    printf("\tconst dx,%s\n", end);
+    printf("\tjmp dx\n");
+
+    printf(":%s\n", jump);
+    printf("\tconst ax,1\n");
+    printf("\tpush ax\n");
+
+    printf(":%s\n", end);
+
+    printf(";Fin infeq\n");
+    label++;
+    free(jump);
+    free(end);
+}
+
+void supeq(){
+    printf(";Debut supeq\n");
+    char *jump = create_label("jump_supeq",label);
+    char *end = create_label("end_supeq",label);
+    //pop les deux valeurs
+    printf("\tpop bx\n");
+    printf("\tpop ax\n");
+
+    printf("\tconst cx,%s\n", jump);
+    printf("\tcmp ax,bx\n");
+    printf("\tjmpc cx\n");
+    printf("\tsless bx,ax\n");
+    printf("\tjmpc cx\n");
+
+    printf("\tconst ax,0\n");
+    printf("\tpush ax\n");
+    printf("\tconst dx,%s\n", end);
+    printf("\tjmp dx\n");
+
+    printf(":%s\n", jump);
+    printf("\tconst ax,1\n");
+    printf("\tpush ax\n");
+
+    printf(":%s\n", end);
+
+    printf(";Fin supeq\n");
+    label++;
+    free(jump);
+    free(end);
+}
+
 void num(int number){
     printf("\tconst ax,%d\n",number);
     printf("\tpush ax\n");

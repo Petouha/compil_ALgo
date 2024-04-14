@@ -139,6 +139,38 @@ Incrémente label.
 void diff();
 
 /*
+Fait la comparaison si la première valeur est supérieure à la deuxième valeur sur la pile.
+UTILISE : ax,bx,cx
+RESULTAT: en haut de la pile
+Incrémente label.
+*/
+void sup();
+
+/*
+Fait la comparaison si la première valeur est inférieure à la deuxième valeur sur la pile.
+UTILISE : ax,bx,cx
+RESULTAT: en haut de la pile
+Incrémente label.
+*/
+void inf();
+
+/*
+Fait la comparaison si la première valeur est supérieure ou égale à la deuxième valeur sur la pile.
+UTILISE : ax,bx,cx
+RESULTAT: en haut de la pile
+Incrémente label.
+*/
+void supeq();
+
+/*
+Fait la comparaison si la première valeur est inférieure ou égale à la deuxième valeur sur la pile.
+UTILISE : ax,bx,cx
+RESULTAT: en haut de la pile
+Incrémente label.
+*/
+void infeq();
+
+/*
 Met sur la pile la constante à utiliser
 UTILISE: ax
 */
