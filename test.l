@@ -21,6 +21,7 @@
 "\\ELSE"        {return ELSE;}  
 "\\DOWHILE"     {return DOWHILE;}
 "\\OD"          {return OD;}
+"\\DOFORI"      {return DOFORI;}
 
 ","             {return VIRGULE;}
 
