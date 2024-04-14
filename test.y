@@ -38,9 +38,9 @@ void yyerror(const char* s){
 %token BEG END SET INCR DECR CALL RET IF FI ELSE DOWHILE OD;
 %token OPEN_ACCO CLOSE_ACCO VIRGULE OPEN_PARENT CLOSE_PARENT;
 %token ADD SUB MULT DIV;
-%token DIF AND EGAL OR NOT TRUE FALSE;
+%token DIF AND EGAL OR NOT TRUE FALSE INF INFEQ SUP SUPEQ;
 
-%left EGAL DIF
+%left EGAL DIF INF INFEQ SUP SUPEQ
 %left OR
 %left AND
 %left NOT
@@ -244,6 +244,62 @@ EXPR:
             add_intermediare(&inter,OR_OP,OP,NULL,current_fct);
         }
     }
+    | EXPR EGAL EXPR {
+    if($1 != $3){
+        fprintf(stderr,"Type non compatible\n");
+        exit(EXIT_FAILURE);
+    }
+    $$=BOOL_T;
+    add_intermediare(&inter,EGAL_OP,OP,NULL,current_fct);
+    }
+    | EXPR DIF EXPR {
+        if($1 != $3){
+            fprintf(stderr,"Type non compatible\n");
+            exit(EXIT_FAILURE);
+        }
+        $$=BOOL_T;
+        add_intermediare(&inter,DIF_OP,OP,NULL,current_fct);
+    }
+    | EXPR INF EXPR {
+        if($1 != NUM_T || $3 != NUM_T){
+            fprintf(stderr,"Type non compatible\n");
+            exit(EXIT_FAILURE);
+        }
+        $$=BOOL_T;
+        add_intermediare(&inter,INF_OP,OP,NULL,current_fct);
+    }
+    | EXPR INFEQ EXPR {
+        if($1 != NUM_T || $3 != NUM_T){
+            fprintf(stderr,"Type non compatible\n");
+            exit(EXIT_FAILURE);
+        }
+        $$=BOOL_T;
+        add_intermediare(&inter,INFEQ_OP,OP,NULL,current_fct);
+    }
+    | EXPR SUP EXPR {
+        if($1 != NUM_T || $3 != NUM_T){
+            fprintf(stderr,"Type non compatible\n");
+            exit(EXIT_FAILURE);
+        }
+        $$=BOOL_T;
+        add_intermediare(&inter,SUP_OP,OP,NULL,current_fct);
+    }
+    | EXPR SUPEQ EXPR {
+        if($1 != NUM_T || $3 != NUM_T){
+            fprintf(stderr,"Type non compatible\n");
+            exit(EXIT_FAILURE);
+        }
+        $$=BOOL_T;
+        add_intermediare(&inter,SUPEQ_OP,OP,NULL,current_fct);
+    }
+    | NOT OPEN_PARENT EXPR CLOSE_PARENT {
+        if($3 != BOOL_T){
+            fprintf(stderr,"Type non compatible\n");
+            exit(EXIT_FAILURE);
+        }
+        $$=BOOL_T;
+        add_intermediare(&inter,NOT_OP,OP,NULL,current_fct);
+    }
     | OPEN_PARENT EXPR CLOSE_PARENT{$$=$2;}
     | NUM {
         $$=NUM_T;
@@ -269,33 +325,9 @@ EXPR:
         add_intermediare(&inter,IDF_OP,ARG,$1,current_fct);
         }
     | call_expr
-     {
+    {
         $$=NUM_T;
-        };
-    | EXPR EGAL EXPR {
-    if($1 != $3){
-        fprintf(stderr,"Type non compatible\n");
-        exit(EXIT_FAILURE);
-    }
-    $$=BOOL_T;
-    add_intermediare(&inter,EGAL_OP,OP,NULL,current_fct);
-    }
-    | EXPR DIF EXPR {
-        if($1 != $3){
-            fprintf(stderr,"Type non compatible\n");
-            exit(EXIT_FAILURE);
-        }
-        $$=BOOL_T;
-        add_intermediare(&inter,DIF_OP,OP,NULL,current_fct);
-    }
-    | NOT EXPR {
-        if($2 != BOOL_T){
-            fprintf(stderr,"Type non compatible\n");
-            exit(EXIT_FAILURE);
-        }
-        $$=BOOL_T;
-        add_intermediare(&inter,NOT_OP,OP,NULL,current_fct);
-    }
+    };
 call_expr : call_e call_expr_params {};    
 
 call_e : CALL OPEN_ACCO IDF CLOSE_ACCO
