@@ -36,6 +36,10 @@ typedef enum operation{
     FI_OP, //23
     ELSE_OP, //24
     ELSE_2_OP, //25
+    DOWHILE_1_OP, //26
+    DOWHILE_2_OP, //27
+    OD_1_OP, //28
+    OD_2_OP, //29
 } operation;
 
 // enum pour différencier entre les deux types d'arguments

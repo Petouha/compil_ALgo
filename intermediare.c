@@ -236,6 +236,28 @@ void choose_op(intermediare *node){
             char *else_jump=create_label("if_jump",atoi(node->arg));
             printf(":%s\n",else_jump);
             break;
+        case DOWHILE_1_OP:
+            printf(";Do while statement\n");
+            char *do_while=create_label("do_while",atoi(node->arg));
+            printf(":%s\n",do_while);
+            break;
+        case DOWHILE_2_OP:
+            printf(";Testing condition\n");
+            printf("\tpop ax\n");
+            printf("\tconst bx,0\n");
+            printf("\tconst cx,%s\n",create_label("do_while",atoi(node->arg)));
+            printf("\tcmp ax,bx\n");
+            printf("\tjmpz cx\n");
+            break;
+        case OD_1_OP:
+            printf(";Jumping to the while\n");
+            printf("\tconst ax,%s\n",create_label("do_while",atoi(node->arg)));
+            printf("\tjmp ax\n");
+            break;
+        case OD_2_OP:
+            printf(";End of the do while\n");
+            printf(":%s\n",create_label("do_while",atoi(node->arg)));
+            break;
         default:
         break;
     }
