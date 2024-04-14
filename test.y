@@ -9,8 +9,8 @@ func_tab *liste;
 func_tab *current_fct, *current_call;
 intermediare *inter;
 int param_number,local_number;
-int if_label = 0;
-cond_tab *if_table;
+int if_label,while_label;
+cond_tab *if_table, *while_table;
 
 
 char tmp[256], tmp2[256];
@@ -35,7 +35,7 @@ void yyerror(const char* s){
 %token<entier> NUM
 %token<idf> IDF
 
-%token BEG END SET INCR DECR CALL RET IF FI ELSE;
+%token BEG END SET INCR DECR CALL RET IF FI ELSE DOWHILE OD;
 %token OPEN_ACCO CLOSE_ACCO VIRGULE OPEN_PARENT CLOSE_PARENT;
 %token ADD SUB MULT DIV;
 %token DIF AND EGAL OR NOT TRUE FALSE;
@@ -138,6 +138,29 @@ instr: SET OPEN_ACCO IDF CLOSE_ACCO OPEN_ACCO EXPR CLOSE_ACCO
         if_label++;
         add_intermediare(&inter,IF_OP,ARG,tmp,current_fct);
     } CLOSE_ACCO code ELSE_F;
+
+
+
+    // Boucle While
+    | DOWHILE {
+        snprintf(tmp,256,"%d",while_label);
+        add_cond(&while_table,while_label);
+        while_label++;
+        add_intermediare(&inter,DOWHILE_1_OP,ARG,tmp,current_fct);
+    }OPEN_ACCO COND CLOSE_ACCO {
+        snprintf(tmp,256,"%d",while_label);
+        add_cond(&while_table,while_label);
+        while_label++;
+        add_intermediare(&inter,DOWHILE_2_OP,ARG,tmp,current_fct);
+    } code OD {
+        //récupérer le label pour la fin du while
+        snprintf(tmp2,256,"%d",pop_cond(&while_table));
+        //récupérer le label pour revenir au while
+        snprintf(tmp,256,"%d",pop_cond(&while_table));
+        add_intermediare(&inter,OD_1_OP,ARG,tmp,current_fct);
+        //pour ajouter le label de la fin
+        add_intermediare(&inter,OD_2_OP,ARG,tmp2,current_fct);
+    };
 
 
 ELSE_F : ELSE {
