@@ -47,6 +47,11 @@ typedef enum operation{
     DOWHILE_2_OP, //27
     OD_1_OP, //28
     OD_2_OP, //29
+    DOFORI_1_OP, //30
+    DOFORI_2_OP, //31
+    DOFORI_3_OP, //32
+    OD_FORI_1_OP, //33
+    OD_FORI_2_OP, //34
 } operation;
 
 // enum pour différencier entre les deux types d'arguments

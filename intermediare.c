@@ -273,6 +273,44 @@ void choose_op(intermediare *node){
             printf(";End of the do while\n");
             printf(":%s\n",create_label("do_while",atoi(node->arg)));
             break;
+        case DOFORI_1_OP:
+            printf(";Affecting the start of the loop\n");
+            affect_from_top_stack(node->arg,node->function);
+            printf(";Push the adress of the var used for iteration\n");
+            printf("\tpush bx\n");
+            break;
+        case DOFORI_2_OP:
+            printf(":%s\n",create_label("for_loop",atoi(node->arg)));
+            printf(";Calculating the end value\n");
+            break;
+        case DOFORI_3_OP:
+            printf(";Comparing the end value\n");
+            printf("\tpop ax\n");
+            printf("\tpop bx\n");
+            printf("\tloadw cx,bx\n");
+            printf(";Push the address back\n");
+            printf("\tpush bx\n");
+            printf("\tconst dx,%s\n",create_label("for_loop",atoi(node->arg)));
+            printf("\tsless ax,cx\n");
+            printf("\tjmpc dx\n");
+            break;
+        case OD_FORI_1_OP:
+            printf(";Incrementing the value\n");
+            printf("\tpop bx\n");
+            printf("\tloadw ax,bx\n");
+            printf("\tconst cx,1\n");
+            printf("\tadd ax,cx\n");
+            printf("\tstorew ax,bx\n");
+            printf(";Push the address back\n");
+            printf("\tpush bx\n");
+            printf(";Jumping to for\n");
+            printf("\tconst ax,%s\n",create_label("for_loop",atoi(node->arg)));
+            printf("\tjmp ax\n");
+            break;
+        case OD_FORI_2_OP:
+            printf(";End of the for loop\n");
+            printf(":%s\n",create_label("for_loop",atoi(node->arg)));
+            break;
         default:
         break;
     }
