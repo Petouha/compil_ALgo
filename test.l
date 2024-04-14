@@ -22,26 +22,27 @@
 "\\DOWHILE"     {return DOWHILE;}
 "\\OD"          {return OD;}
 
-"," {return VIRGULE;}
+","             {return VIRGULE;}
 
-"{" {return OPEN_ACCO;}
+"{"             {return OPEN_ACCO;}
+"}"             {return CLOSE_ACCO;}
+"("             {return OPEN_PARENT;}
+")"             {return CLOSE_PARENT;}
 
-"}" {return CLOSE_ACCO;}
+"+"             {return ADD;}
+"-"             {return SUB;}
+"*"             {return MULT;}
+"/"             {return DIV;}
 
-"(" {return OPEN_PARENT;}
-
-")" {return CLOSE_PARENT;}
-
-"+" {return ADD;}
-"-" {return SUB;}
-"*" {return MULT;}
-"/" {return DIV;}
-
-"!=" {return DIF;}
-"&&" {return AND;}
-"==" {return EGAL;}
-"||" {return OR;}
-"!"  {return NOT;}
+"!="            {return DIF;}
+"&&"            {return AND;}
+"=="            {return EGAL;}
+"||"            {return OR;}
+"!"             {return NOT;}
+"<"             {return INF;}
+"<="            {return INFEQ;}
+">"             {return SUP;}
+">="            {return SUPEQ;}
 
 "true" {return TRUE;}
 "false" {return FALSE;}
