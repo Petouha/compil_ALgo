@@ -18,7 +18,9 @@
 "\\RETURN"      {return RET;}
 "\\IF"          {return IF;}
 "\\FI"          {return FI;}
-"\\ELSE"        {return ELSE;}
+"\\ELSE"        {return ELSE;}  
+"\\DOWHILE"     {return DOWHILE;}
+"\\OD"          {return OD;}
 
 "," {return VIRGULE;}
 
