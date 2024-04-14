@@ -132,7 +132,7 @@ instr: SET OPEN_ACCO IDF CLOSE_ACCO OPEN_ACCO EXPR CLOSE_ACCO
         //decrement($3,current_fct->table);
         add_intermediare(&inter,DECR_OP,ARG,$3,current_fct);
     };
-    | IF OPEN_ACCO COND {
+    | IF OPEN_ACCO EXPR {
         snprintf(tmp,256,"%d",if_label);
         add_cond(&if_table,if_label);
         if_label++;
@@ -147,7 +147,7 @@ instr: SET OPEN_ACCO IDF CLOSE_ACCO OPEN_ACCO EXPR CLOSE_ACCO
         add_cond(&while_table,while_label);
         while_label++;
         add_intermediare(&inter,DOWHILE_1_OP,ARG,tmp,current_fct);
-    }OPEN_ACCO COND CLOSE_ACCO {
+    }OPEN_ACCO EXPR CLOSE_ACCO {
         snprintf(tmp,256,"%d",while_label);
         add_cond(&while_table,while_label);
         while_label++;
@@ -272,13 +272,30 @@ EXPR:
      {
         $$=NUM_T;
         };
-COND : EXPR EGAL EXPR {
+    | EXPR EGAL EXPR {
     if($1 != $3){
         fprintf(stderr,"Type non compatible\n");
         exit(EXIT_FAILURE);
     }
+    $$=BOOL_T;
     add_intermediare(&inter,EGAL_OP,OP,NULL,current_fct);
-}
+    }
+    | EXPR DIF EXPR {
+        if($1 != $3){
+            fprintf(stderr,"Type non compatible\n");
+            exit(EXIT_FAILURE);
+        }
+        $$=BOOL_T;
+        add_intermediare(&inter,DIF_OP,OP,NULL,current_fct);
+    }
+    | NOT EXPR {
+        if($2 != BOOL_T){
+            fprintf(stderr,"Type non compatible\n");
+            exit(EXIT_FAILURE);
+        }
+        $$=BOOL_T;
+        add_intermediare(&inter,NOT_OP,OP,NULL,current_fct);
+    }
 call_expr : call_e call_expr_params {};    
 
 call_e : CALL OPEN_ACCO IDF CLOSE_ACCO
