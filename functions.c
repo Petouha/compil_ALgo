@@ -172,6 +172,30 @@ void egal(){
     free(end);
 }
 
+void diff(){
+    printf(";Debut différence\n");
+    char *jump = create_label("jump_diff",label);
+    char *end = create_label("end_diff",label);
+    printf("\tpop ax\n");
+    printf("\tpop bx\n");
+    printf("\tconst cx,%s\n",jump);
+    printf("\tcmp ax,bx\n");
+    printf("\tjmpc cx\n");
+    printf("\tconst ax,1\n");
+    printf("\tpush ax\n");
+    printf("\tconst cx,%s\n",end);
+    printf("\tjmp cx\n");
+    printf(":%s\n",jump);
+    printf("\tconst ax,0\n");   
+    printf("\tpush ax\n");
+    printf(":%s\n",end);
+    printf(";Fin différence\n");
+    label++;
+    free(jump);
+    free(end);
+
+}
+
 void num(int number){
     printf("\tconst ax,%d\n",number);
     printf("\tpush ax\n");
@@ -207,11 +231,6 @@ void decrement(char* nom,func_tab* head){
     printf("\tstorew dx,bx\n");
     //affiche le registre qui contient nom; print_reg("bx");
     printf(";end decrement\n");
-}
-
-void if_statement(){
-    
-    
 }
 
 

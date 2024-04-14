@@ -32,6 +32,7 @@ typedef enum operation{
     CALL_EXP_OP, //19
     CALL_EXP_PARAM_END_OP, //20
     EGAL_OP, //21
+    DIF_OP, //22
     IF_OP, //22
     FI_OP, //23
     ELSE_OP, //24

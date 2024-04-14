@@ -211,6 +211,9 @@ void choose_op(intermediare *node){
         case EGAL_OP:
             egal();
             break;
+        case DIF_OP:
+            diff();
+            break;
         case IF_OP:
             printf(";If statement\n");
             char *if_jump=create_label("if_jump",atoi(node->arg));

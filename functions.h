@@ -131,6 +131,14 @@ Incrémente label.
 void egal();
 
 /*
+Fait la différence entre les deux premières valeurs sur la pile.
+UTILISE : ax,bx,cx
+RESULTAT: en haut de la pile
+Incrémente label.
+*/
+void diff();
+
+/*
 Met sur la pile la constante à utiliser
 UTILISE: ax
 */
