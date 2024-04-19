@@ -57,37 +57,29 @@ S : |
 function : BEG OPEN_ACCO IDF CLOSE_ACCO
 {
     ajouter_func($3,0,0,&liste);
-
     current_fct=recherche_func($3,liste);
-    //fprintf(stderr,"Debyt de la fonction %s\n",current_fct->nom_func);
-
     add_intermediare(&inter,FUNC_OP,ARG,$3,current_fct);
 
     param_number=0;
     local_number=0;
-    };
+};
 
-/* end_function : RET OPEN_ACCO EXPR CLOSE_ACCO END
-{
-    add_intermediare(&inter,RET_OP,OP,NULL,current_fct);
-    //fprintf(stderr,"Fin de la fonction %s\n",current_fct->nom_func);
-}; */
+
     
 parameters : OPEN_ACCO list_parameters CLOSE_ACCO 
 {
-    current_fct->nbr_params=param_number;add_intermediare(&inter,NUL_OP,OP,NULL,current_fct);};
+    current_fct->nbr_params=param_number;
+    add_intermediare(&inter,NUL_OP,OP,NULL,current_fct);};
 
 list_parameters:
     | IDF 
     {
-        //fprintf(stderr,"%s\n",$1);
         ajouter(PARAM_VAR,$1,current_fct->nom_func,liste);
         param_number++;
         add_intermediare(&inter,TEST_OP,OP,NULL,current_fct);
         }
     | list_parameters VIRGULE IDF
     {
-        //fprintf(stderr,"%s\n",$3);
         ajouter(PARAM_VAR,$3,current_fct->nom_func,liste);
         param_number++;
         add_intermediare(&inter,TEST_OP,OP,NULL,current_fct);
@@ -102,13 +94,6 @@ instr: SET OPEN_ACCO IDF CLOSE_ACCO OPEN_ACCO EXPR CLOSE_ACCO
             local_number++;
             current_fct->nbr_locals++;
         }
-        //print_param($3,current_fct->table);
-
-        //affect_from_top_stack($3,liste->table);
-        //print_param($3,current_fct->table);
-
-        //fprintf(stderr,"affect %s = \n",$3);
-
         add_intermediare(&inter,SET_OP,ARG,$3,current_fct);
         }
     |INCR OPEN_ACCO IDF CLOSE_ACCO
@@ -117,10 +102,6 @@ instr: SET OPEN_ACCO IDF CLOSE_ACCO OPEN_ACCO EXPR CLOSE_ACCO
             fprintf(stderr,"La variable \"%s\" n'existe pas\n",$3);
             exit(EXIT_FAILURE);
         }
-
-        //increment($3,current_fct->table);
-        //print_param($3,current_fct->table);
-
         add_intermediare(&inter,INCR_OP,ARG,$3,current_fct);
     };
     |DECR OPEN_ACCO IDF CLOSE_ACCO
@@ -129,7 +110,6 @@ instr: SET OPEN_ACCO IDF CLOSE_ACCO OPEN_ACCO EXPR CLOSE_ACCO
             fprintf(stderr,"La variable \"%s\" n'existe pas\n",$3);
             exit(EXIT_FAILURE);
         }
-        //decrement($3,current_fct->table);
         add_intermediare(&inter,DECR_OP,ARG,$3,current_fct);
     };
     | IF OPEN_ACCO EXPR {
@@ -365,11 +345,11 @@ call_expr : call_e call_expr_params {};
 
 call_e : CALL OPEN_ACCO IDF CLOSE_ACCO
 {
+    param_number=0;
     if(recherche_func($3,liste) == NULL){
         fprintf(stderr,"La fonction \"%s\" n'existe pas\n",$3);
         exit(EXIT_FAILURE);
     }
-    param_number=0;
     current_call=recherche_func($3,liste);
 
     add_intermediare(&inter,CALL_EXP_OP,OP,NULL,current_call);
@@ -378,12 +358,10 @@ call_e : CALL OPEN_ACCO IDF CLOSE_ACCO
     
 call_expr_params : OPEN_ACCO call_expr_param CLOSE_ACCO
 {
-    if(param_number != current_call->nbr_params){
-        fprintf(stderr,"Nombre de parametres incorrect\n");
-        exit(EXIT_FAILURE);}
+    // if(param_number != current_call->nbr_params){
+    //     fprintf(stderr,"Nombre de parametres incorrect pour %s:%d\n",current_call->nom_func,param_number);
+    //     exit(EXIT_FAILURE);}
     add_intermediare(&inter,CALL_EXP_PARAM_END_OP,OP,NULL,current_call);
-    // Dépiler le nombre de variables locales + paramètres
-    
 };
 
 call_expr_param: 
@@ -435,9 +413,8 @@ int main(void){
     liste=NULL;
     inter=NULL;
     yyparse();
-    print_intermediare(inter);
+    traverse_func_tab(liste);
     generate_intermediare(inter);
-    print_sym_tab(liste->table);
     free_intermediare(inter);
     return 0;
 }
