@@ -214,6 +214,12 @@ Ajoute en tête de liste la nouvelle cellule qui contient l'identifiant
 void ajouter(int val, char *nom, char* nom_func,func_tab* head);
 
 /*
+Traverse la table des fonctions et la table des symboles de chacunes d'elles
+
+*/
+void traverse_func_tab(func_tab *head);
+
+/*
 Ajoute en tête de liste la nouvelle cellule qui contient la fonction
 */
 void ajouter_func(char *nom, int nbr_p, int nbr_v,func_tab **head);

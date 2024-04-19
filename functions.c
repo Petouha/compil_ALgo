@@ -1,5 +1,6 @@
 #include"functions.h"
 
+
 int label = 0;
 
 void err_div(){
@@ -334,12 +335,10 @@ void affect_from_top_stack(char *nom,func_tab* head){
 void increment(char* nom,func_tab* head){
     printf(";increment : %s\n",nom);
     get_param_from_stack(nom,head);
-    //print_reg("bx");
     printf("\tpop dx\n");
     printf("\tconst ax,1\n");
     printf("\tadd dx,ax\n");
     printf("\tstorew dx,bx\n");
-    //affiche le registre qui contient nom; print_reg("bx");
     printf(";end increment\n");
 }
 
@@ -428,12 +427,23 @@ void print_sym_tab(sym_tab *head){
     //printf("--idf---------type-------\n");
     while(head != NULL)
     {
-        printf(";name %s--type %d--num_val %d\n",head->nom_idf,head->type,head->num_var);
+        fprintf(stderr,";name %s--type %d--num_val %d\n",head->nom_idf,head->type,head->num_var);
         head=head->ptr;
     }
-    
 }
 
+// génère du code pour une fonction qui parcours la strcuture func_tab en profondeur
+void traverse_func_tab(func_tab *head) {
+    if (head == NULL) {
+        return;
+    }
+    fprintf(stderr, "--------Function: %s---------\n", head->nom_func);
+    fprintf(stderr, "Number of parameters: %d\n", head->nbr_params);
+    fprintf(stderr, "Number of locals: %d\n", head->nbr_locals);
+    fprintf(stderr, "Symbol Table:\n");
+    print_sym_tab(head->table);
+    traverse_func_tab(head->ptr);
+}
 
 
 void get_param_from_stack(char *nom,func_tab *head){
