@@ -50,7 +50,7 @@
 
 [0-9]+ {yylval.entier=atoi(yytext);return NUM;}
 
-[a-zA-Z]+ {yylval.idf=strdup(yytext);return IDF;}
+[a-zA-Z][a-zA-Z0-9]* {yylval.idf=strdup(yytext);return IDF;}
 
 [[:blank:]]+ {;}
 
