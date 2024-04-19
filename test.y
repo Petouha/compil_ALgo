@@ -66,10 +66,10 @@ function : BEG OPEN_ACCO IDF CLOSE_ACCO
 
 
     
-parameters : OPEN_ACCO list_parameters CLOSE_ACCO 
-{
+parameters : OPEN_ACCO list_parameters CLOSE_ACCO {
     current_fct->nbr_params=param_number;
-    add_intermediare(&inter,NUL_OP,OP,NULL,current_fct);};
+    add_intermediare(&inter,NUL_OP,OP,NULL,current_fct);
+    };
 
 list_parameters:
     | IDF 
@@ -83,11 +83,14 @@ list_parameters:
         ajouter(PARAM_VAR,$3,current_fct->nom_func,liste);
         param_number++;
         add_intermediare(&inter,TEST_OP,OP,NULL,current_fct);
-        };
+        }
+;
+
 code: instr code | ;
 
-instr: SET OPEN_ACCO IDF CLOSE_ACCO OPEN_ACCO EXPR CLOSE_ACCO
-    {
+instr:
+// Affectation d'une variable 
+SET OPEN_ACCO IDF CLOSE_ACCO OPEN_ACCO EXPR CLOSE_ACCO{
         if(recherche($3,current_fct->table) ==  NULL){
             ajouter(LOCAL_VAR,$3,current_fct->nom_func
             ,current_fct);
@@ -95,33 +98,32 @@ instr: SET OPEN_ACCO IDF CLOSE_ACCO OPEN_ACCO EXPR CLOSE_ACCO
             current_fct->nbr_locals++;
         }
         add_intermediare(&inter,SET_OP,ARG,$3,current_fct);
-        }
-    |INCR OPEN_ACCO IDF CLOSE_ACCO
-    {
+    };
+// Incrémnetation d'une variable
+    |INCR OPEN_ACCO IDF CLOSE_ACCO{
         if(recherche($3,current_fct->table) ==  NULL){
             fprintf(stderr,"La variable \"%s\" n'existe pas\n",$3);
             exit(EXIT_FAILURE);
         }
         add_intermediare(&inter,INCR_OP,ARG,$3,current_fct);
     };
-    |DECR OPEN_ACCO IDF CLOSE_ACCO
-    {
+// Décrémentation d'une variable
+    |DECR OPEN_ACCO IDF CLOSE_ACCO{
         if(recherche($3,current_fct->table) ==  NULL){
             fprintf(stderr,"La variable \"%s\" n'existe pas\n",$3);
             exit(EXIT_FAILURE);
         }
         add_intermediare(&inter,DECR_OP,ARG,$3,current_fct);
     };
-    | IF OPEN_ACCO EXPR {
+// Condition if
+    | IF OPEN_ACCO EXPR{
         snprintf(tmp,256,"%d",if_label);
         add_cond(&if_table,if_label);
         if_label++;
         add_intermediare(&inter,IF_OP,ARG,tmp,current_fct);
-    } CLOSE_ACCO code ELSE_F;
-
-
-
-    // Boucle While
+    }
+    CLOSE_ACCO code ELSE_F;
+// Boucle While
     | DOWHILE {
         snprintf(tmp,256,"%d",while_label);
         add_cond(&while_table,while_label);
@@ -140,11 +142,13 @@ instr: SET OPEN_ACCO IDF CLOSE_ACCO OPEN_ACCO EXPR CLOSE_ACCO
         add_intermediare(&inter,OD_1_OP,ARG,tmp,current_fct);
         //pour ajouter le label de la fin
         add_intermediare(&inter,OD_2_OP,ARG,tmp2,current_fct);
-    };
-
+    }
+;
+// Retour de fonction
     | RET OPEN_ACCO EXPR CLOSE_ACCO {
         add_intermediare(&inter,RET_OP,OP,NULL,current_fct);
-    }
+    };
+// Boucle for
     | DOFORI OPEN_ACCO IDF CLOSE_ACCO OPEN_ACCO EXPR CLOSE_ACCO {
         if(recherche($3,current_fct->table) ==  NULL){
             ajouter(LOCAL_VAR,$3,current_fct->nom_func
@@ -177,9 +181,8 @@ instr: SET OPEN_ACCO IDF CLOSE_ACCO OPEN_ACCO EXPR CLOSE_ACCO
         add_intermediare(&inter,OD_FORI_1_OP,ARG,tmp,current_fct);
         add_intermediare(&inter,OD_FORI_2_OP,ARG,tmp2,current_fct);
     }
-         
-
-
+;
+// Condition else 
 ELSE_F : ELSE {
     // récupérer le label pour le if qui saute juste avant le else
     snprintf(tmp2,256,"%d",pop_cond(&if_table));
@@ -198,9 +201,11 @@ ELSE_F : ELSE {
         snprintf(tmp,256,"%d",pop_cond(&if_table));
         add_intermediare(&inter,FI_OP,ARG,tmp,current_fct);
     
-    };
+    }
+;
+// Les expressions
 EXPR:
- EXPR ADD EXPR{
+    EXPR ADD EXPR {
     if(test_expr_int($1,$3) == ERR_T){
             fprintf(stderr,"Type non compatible\n");
             exit(EXIT_FAILURE);
@@ -211,6 +216,7 @@ EXPR:
             //addition();
         }
     }
+
     | EXPR SUB EXPR {
         if(test_expr_int($1,$3) == ERR_T){
             fprintf(stderr,"Type non compatible\n");
@@ -221,6 +227,7 @@ EXPR:
             add_intermediare(&inter,SUB_OP,OP,NULL,current_fct);
         }
     }
+
     | EXPR MULT EXPR {
         if(test_expr_int($1,$3) == ERR_T){
             fprintf(stderr,"Type non compatible\n");
@@ -232,6 +239,7 @@ EXPR:
             add_intermediare(&inter,MUL_OP,OP,NULL,current_fct);
         }
     }
+
     | EXPR DIV EXPR {
         if(test_expr_int($1,$3) == ERR_T){
             fprintf(stderr,"Type non compatible\n");
@@ -241,6 +249,7 @@ EXPR:
             add_intermediare(&inter,DIV_OP,OP,NULL,current_fct);
         }
     }
+
     | EXPR AND EXPR {
         if(test_expr_bool($1,$3) == ERR_T){
             $$=ERR_T;
@@ -249,7 +258,8 @@ EXPR:
             add_intermediare(&inter,AND_OP,OP,NULL,current_fct);
         }
     }
-    | EXPR OR EXPR{
+    
+    | EXPR OR EXPR {
         if(test_expr_bool($1,$3) == ERR_T){
             $$=ERR_T;
         } else {
@@ -257,6 +267,7 @@ EXPR:
             add_intermediare(&inter,OR_OP,OP,NULL,current_fct);
         }
     }
+
     | EXPR EGAL EXPR {
     if($1 != $3){
         fprintf(stderr,"Type non compatible\n");
@@ -265,6 +276,7 @@ EXPR:
     $$=BOOL_T;
     add_intermediare(&inter,EGAL_OP,OP,NULL,current_fct);
     }
+
     | EXPR DIF EXPR {
         if($1 != $3){
             fprintf(stderr,"Type non compatible\n");
@@ -273,6 +285,7 @@ EXPR:
         $$=BOOL_T;
         add_intermediare(&inter,DIF_OP,OP,NULL,current_fct);
     }
+
     | EXPR INF EXPR {
         if($1 != NUM_T || $3 != NUM_T){
             fprintf(stderr,"Type non compatible\n");
@@ -281,6 +294,7 @@ EXPR:
         $$=BOOL_T;
         add_intermediare(&inter,INF_OP,OP,NULL,current_fct);
     }
+
     | EXPR INFEQ EXPR {
         if($1 != NUM_T || $3 != NUM_T){
             fprintf(stderr,"Type non compatible\n");
@@ -289,6 +303,7 @@ EXPR:
         $$=BOOL_T;
         add_intermediare(&inter,INFEQ_OP,OP,NULL,current_fct);
     }
+
     | EXPR SUP EXPR {
         if($1 != NUM_T || $3 != NUM_T){
             fprintf(stderr,"Type non compatible\n");
@@ -297,6 +312,7 @@ EXPR:
         $$=BOOL_T;
         add_intermediare(&inter,SUP_OP,OP,NULL,current_fct);
     }
+
     | EXPR SUPEQ EXPR {
         if($1 != NUM_T || $3 != NUM_T){
             fprintf(stderr,"Type non compatible\n");
@@ -305,6 +321,7 @@ EXPR:
         $$=BOOL_T;
         add_intermediare(&inter,SUPEQ_OP,OP,NULL,current_fct);
     }
+
     | NOT OPEN_PARENT EXPR CLOSE_PARENT {
         if($3 != BOOL_T){
             fprintf(stderr,"Type non compatible\n");
@@ -313,21 +330,28 @@ EXPR:
         $$=BOOL_T;
         add_intermediare(&inter,NOT_OP,OP,NULL,current_fct);
     }
-    | OPEN_PARENT EXPR CLOSE_PARENT{$$=$2;}
+
+    | OPEN_PARENT EXPR CLOSE_PARENT{
+        $$=$2;
+    }
+
     | NUM {
         $$=NUM_T;
         //num($1);
         sprintf(tmp,"%d",$1);
         add_intermediare(&inter,NUM_OP,ARG,tmp,current_fct);
-        };
+    };
+
     | FALSE {
         $$=BOOL_T;
         add_intermediare(&inter,NUM_OP,ARG,"0",current_fct);
-        }
+    }
+
     | TRUE {
         $$=BOOL_T;
         add_intermediare(&inter,NUM_OP,ARG,"1",current_fct);
-        }
+    }
+
     | IDF {
         $$=NUM_T;
         if(recherche($1,current_fct->table) == NULL){
@@ -336,15 +360,16 @@ EXPR:
         }
         
         add_intermediare(&inter,IDF_OP,ARG,$1,current_fct);
-        }
-    | call_expr
-    {
-        $$=NUM_T;
-    };
-call_expr : call_e call_expr_params {};    
+    }
 
-call_e : CALL OPEN_ACCO IDF CLOSE_ACCO
-{
+    | call_expr{
+        $$=NUM_T;
+    }
+;
+// Appel de fonction dans le code
+call_expr : call_e call_expr_params;   
+
+call_e : CALL OPEN_ACCO IDF CLOSE_ACCO{
     param_number=0;
     if(recherche_func($3,liste) == NULL){
         fprintf(stderr,"La fonction \"%s\" n'existe pas\n",$3);
@@ -353,33 +378,30 @@ call_e : CALL OPEN_ACCO IDF CLOSE_ACCO
     current_call=recherche_func($3,liste);
 
     add_intermediare(&inter,CALL_EXP_OP,OP,NULL,current_call);
-    }
-    ;
+};
     
-call_expr_params : OPEN_ACCO call_expr_param CLOSE_ACCO
-{
+call_expr_params : OPEN_ACCO call_expr_param CLOSE_ACCO{
     // if(param_number != current_call->nbr_params){
     //     fprintf(stderr,"Nombre de parametres incorrect pour %s:%d\n",current_call->nom_func,param_number);
     //     exit(EXIT_FAILURE);}
     add_intermediare(&inter,CALL_EXP_PARAM_END_OP,OP,NULL,current_call);
 };
 
-call_expr_param: 
-    EXPR 
-    {
+call_expr_param: EXPR {
         param_number++;
-        }
-    | call_expr_param VIRGULE EXPR
-    {
+    }
+
+    | call_expr_param VIRGULE EXPR{
         param_number++;
-        };
+    }
+;
 
 
 call_final : call_f call_params;
 
-call_f : CALL OPEN_ACCO IDF CLOSE_ACCO
-{
+call_f : CALL OPEN_ACCO IDF CLOSE_ACCO{
     if(recherche_func($3,liste) == NULL){
+
         fprintf(stderr,"La fonction \"%s\" n'existe pas\n",$3);
         exit(EXIT_FAILURE);
     }
@@ -387,26 +409,23 @@ call_f : CALL OPEN_ACCO IDF CLOSE_ACCO
     current_call=recherche_func($3,liste);
 
     add_intermediare(&inter,CALL_OP,OP,NULL,current_call);
-    }
-    ;
-call_params : OPEN_ACCO call_param CLOSE_ACCO
-{
+};
+call_params : OPEN_ACCO call_param CLOSE_ACCO{
+
     if(param_number != current_call->nbr_params){
         fprintf(stderr,"Nombre de parametres incorrect\n");
         exit(EXIT_FAILURE);}
     add_intermediare(&inter,CALL_PARAM_END_OP,OP,NULL,current_call);
     // Dépiler le nombre de variables locales + paramètres
+};
+
+call_param: EXPR {
+        param_number++;
     }
-    ;
-call_param: 
-    EXPR 
-    {
+    | call_param VIRGULE EXPR{
         param_number++;
-        }
-    | call_param VIRGULE EXPR
-    {
-        param_number++;
-        };
+    }
+;
 %%
 
 int main(void){
