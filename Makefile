@@ -3,37 +3,61 @@ LEX=flex
 YACC=bison
 CC=gcc
 CFLAGS=-g -std=c11 -pedantic -Wall -D_POSIX_C_SOURCE=200809L
-INC_DIR = ./src
+
+# Répertoires du projet
 SRC_DIR = ./src
+INC_DIR = ./include
+PARSER_DIR = ./parser
+BUILD_DIR = ./build
+
+# Options
 LDFLAGS=
-# --nounput: ne g�n�re pas la fonction yyunput() inutile
-# --DYY_NO_INPUT: ne prend pas en compte la fonction input() inutile
-# -D_POSIX_SOURCE: d�clare la fonction fileno()
 LEXOPTS= -D_POSIX_C_SOURCE=200809L -DYY_NO_INPUT --nounput
 YACCOPTS= -Wcounterexamples
 
-# REMPLACER ICI "fichier" PAR LE NOM DE VOS FICHIERS
-PROG=test
+# Nom du programme final
+PROG=compiler
 
-
+# Chemins de recherche
 vpath %.h $(INC_DIR)
 vpath %.c $(SRC_DIR)
+vpath %.l $(PARSER_DIR)
+vpath %.y $(PARSER_DIR)
 
+# Règle par défaut
+all: directories $(BUILD_DIR)/$(PROG)
 
-$(PROG): lex.yy.o $(PROG).tab.o functions.o intermediare.o
-	$(CC) $+ -o $@ $(LDFLAGS) 
+# Création des répertoires s'ils n'existent pas
+directories:
+	mkdir -p $(BUILD_DIR) $(SRC_DIR) $(INC_DIR) $(PARSER_DIR)
 
-lex.yy.c: $(PROG).l $(PROG).tab.h
-	$(LEX) $(LEXOPTS) $<
+# Compilation du programme final
+$(BUILD_DIR)/$(PROG): $(BUILD_DIR)/lex.yy.o $(BUILD_DIR)/$(PROG).tab.o $(BUILD_DIR)/functions.o $(BUILD_DIR)/intermediare.o
+	$(CC) $^ -o $@ $(LDFLAGS)
 
-lex.yy.h: $(PROG).l
+# Génération du lexer (flex)
+$(BUILD_DIR)/lex.yy.c: $(PARSER_DIR)/$(PROG).l $(BUILD_DIR)/$(PROG).tab.h
+	$(LEX) $(LEXOPTS) -o $@ $<
+
+$(BUILD_DIR)/lex.yy.h: $(PARSER_DIR)/$(PROG).l
 	$(LEX) $(LEXOPTS) --header-file=$@ $<
 
-$(PROG).tab.c $(PROG).tab.h: $(PROG).y lex.yy.h
-	$(YACC) $(YACCOPTS) $< -d -v --graph
+# Génération du parser (bison)
+$(BUILD_DIR)/$(PROG).tab.c $(BUILD_DIR)/$(PROG).tab.h: $(PARSER_DIR)/$(PROG).y $(BUILD_DIR)/lex.yy.h
+	$(YACC) $(YACCOPTS) $< -d -v --graph -o $(BUILD_DIR)/$(PROG).tab.c
 
-%.o: %.c
-	$(CC) -DYYDEBUG $(CFLAGS) $< -c
+# Compilation des sources
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
+	$(CC) -DYYDEBUG $(CFLAGS) -I$(INC_DIR) -I$(BUILD_DIR) -c $< -o $@
 
+# Règle spéciale pour les fichiers générés
+$(BUILD_DIR)/%.o: $(BUILD_DIR)/%.c
+	$(CC) -DYYDEBUG $(CFLAGS) -I$(INC_DIR) -I$(BUILD_DIR) -c $< -o $@
+
+# Nettoyage
 clean:
-	-rm $(PROG) *.o lex.yy.* $(PROG).tab.* *.err *.log *.output *.out *.dot *.gv exp*
+	rm -rf $(BUILD_DIR)
+	rm -f *.err *.log *.output *.out *.dot *.gv exp*
+	rm lex.yy.c
+
+.PHONY: all clean directories

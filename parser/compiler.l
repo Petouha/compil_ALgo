@@ -1,6 +1,6 @@
 %{
 #include "functions.h"
-#include "test.tab.h"
+#include "../build/compiler.tab.h"
 #include<stdio.h>
 #include<stdlib.h>
 #include <string.h>
@@ -53,6 +53,8 @@
 [a-zA-Z][a-zA-Z0-9]* {yylval.idf=strdup(yytext);return IDF;}
 
 [[:blank:]]+ {;}
+\r {;}
 
-. {printf("erreur de token,%s non reconnu\n",yytext);}
+. {fprintf(stderr, "ERREUR: Token '%s' (code ASCII %d) non reconnu à la position %d\n", 
+           yytext, (int)yytext[0], yylineno);}
 %%
